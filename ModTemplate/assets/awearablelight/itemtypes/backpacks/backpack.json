@@ -1,0 +1,104 @@
+{
+	"code": "backpack",
+	"maxstacksize": 1,
+	"behaviors": [
+		{
+			"name": "GroundStorable",
+			"properties": {
+				"layout": "SingleCenter",
+				"collisionBox": {
+					"x1": 0.30,
+					"y1": 0,
+					"z1": 0.25,
+					"x2": 0.80,
+					"y2": 0.375,
+					"z2": 0.75
+				}
+			}
+		}
+	],
+	"attributes": {
+		"wearableAttachment": true,
+		"attachShape": { "base": "awearablelight:item/bag/backpack-attached-lantern" },
+		"backpack": {
+			"quantitySlots": 6
+		}
+	},
+	"shape": { "base": "awearablelight:item/bag/backpack-lantern" },
+	"textures": {
+		"straps": { "base": "game:item/bag/backpack/straps" },
+		"leather": { "base": "game:item/bag/backpack/leather" },
+		"lantern": { "base": "awearablelight:entity/humanoid/seraphclothes/waist/heavy-belt" }
+
+	},
+	"lightHsv": [ 4, 2, 9 ],
+	"storageFlags": 2,
+	"creativeinventory": {
+		"general": [ "*" ],
+		"items": [ "*" ],
+		"awearablelight": ["*"]
+	},
+	"guiTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": -20,
+			"y": 21,
+			"z": 180
+		},
+		"origin": {
+			"x": 0.53,
+			"y": 0.35,
+			"z": 0.5
+		},
+		"scale": 2.3,
+		"rotate": true
+	},
+	"fpHandTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0.2
+		},
+		"rotation": {
+			"x": 20,
+			"y": -73,
+			"z": 10
+		},
+		"scale": 2.5
+	},
+	"tpHandTransform": {
+		"translation": {
+			"x": -0.65,
+			"y": -0.6,
+			"z": -0.7
+		},
+		"rotation": {
+			"x": -5,
+			"y": 0,
+			"z": 0
+		},
+		"scale": 0.86
+	},
+	"groundTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": 180,
+			"y": 33,
+			"z": -180
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 4.5
+	}
+}

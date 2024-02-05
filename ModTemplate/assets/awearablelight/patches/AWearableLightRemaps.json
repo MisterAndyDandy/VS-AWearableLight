@@ -1,0 +1,18 @@
+[
+  {
+    "op": "add",
+    "file": "game:config/remaps.json",
+    "side": "server",
+    "path": "/awearablelight:v1.0.1",
+    "value": [
+      "/iir remapq awearablelight:clothes-head-torch-off base:clothes-head-torch-off force",
+      "/iir remapq awearablelight:clothes-head-torch-on base:clothes-head-torch-on force",
+      "/iir remapq awearablelight:clothes-head-candle1-on base:clothes-head-candle1-on force",
+      "/iir remapq awearablelight:clothes-head-candle1-off base:clothes-head-candle1-off force",
+      "/iir remapq awearablelight:clothes-head-candle2-on base:clothes-head-candle2-on force",
+      "/iir remapq awearablelight:clothes-head-candle2-off base:clothes-head-candle2-off force",
+      "/iir remapq awearablelight:basepart-candle1 base:basepart-candle1 force",
+      "/iir remapq awearablelight:basepart-candle2 base:basepart-candle2 force"
+    ]
+  }
+]

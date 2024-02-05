@@ -1,0 +1,19 @@
+{
+	"item-clothes-head-torch-on": "Lámpara potente (Encendida)",
+	"item-clothes-head-torch-off": "Lámpara potente (Apagada)",
+
+	"item-clothes-head-oil-lamp-on": "Lampara de Aceite (Encendida)",
+	"item-clothes-head-oil-lamp-off": "Lampara de Aceite (Apagada)",
+
+	"item-clothes-head-candle1-on": "Lámpara de vela (Encendida)",
+	"item-clothes-head-candle1-off": "Lámpara de vela (Apagada)",
+	"item-clothes-head-candle2-on": "Lámpara con reflector (Encendida)",
+	"item-clothes-head-candle2-off": "Lámpara con reflector (Apagada)",
+
+	"item-clothes-waist-heavy-belt-brass-lantern-off": "Farol de Latón (Encendido)",
+	"item-clothes-waist-heavy-belt-brass-lantern-on": "Farol de Latón (Apagado)",
+
+	"item-basepart-*": "Lámpara (Base)",
+	
+	"game:heldhelp-headlantern-rightclick": "Alternar luz"
+} 

@@ -1,0 +1,23 @@
+{
+  "ingredientPattern": "B,P",
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:oillamp-up",
+      "quantity": 1
+    },
+    "P": {
+      "type": "item",
+      "code": "game:leather-plain",
+      "quantity": 2
+    }
+
+  },
+  "attributes": {"hide": true},
+  "width": 1,
+  "height": 2,
+  "output": {
+    "type": "item",
+    "code": "clothes-head-oil-lamp-off"
+  }
+}

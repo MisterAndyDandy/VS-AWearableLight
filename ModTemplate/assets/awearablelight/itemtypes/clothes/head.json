@@ -1,0 +1,191 @@
+{
+	"code": "clothes",
+	"class": "AttachmentableLight",
+	"variantgroups": [
+		{
+			"code": "category",
+			"states": [ "head" ]
+		},
+		{
+			"code": "head",
+			"combine": "SelectiveMultiply",
+			"onVariant": "category",
+			"states": [
+				"torch-off",
+				"torch-on",
+				"candle1-off",
+				"candle1-on",
+				"candle2-off",
+				"candle2-on",
+				"oil-lamp-off",
+				"oil-lamp-on"
+			]
+		}
+	],
+	"shapeByType": {
+		"@.*-(oil-lamp-on|oil-lamp-off|torch-off|torch-on|candle1-off|candle1-on|candle2-off|candle2-on)": {
+			"base": "awearablelight:entity/humanoid/seraph/clothing/head/{head}"
+		}
+	},
+	"storageFlags": 128,
+	"attributesByType": {
+		"@.*-(oil-lamp-on)": {
+			"combustibleFuelUsed": "fat", // Don't working at the moment..
+			"sound": "game:sounds/effect/extinguish", // when the light turn off.
+			"wearableAttachment": true,
+			"clothescategory": "head",
+			"warmth": 0.1, // Base Value
+			"warmth-bouse": 0.25
+		},
+		"@.*-(oil-lamp-off)": {
+			"combustibleFuelUsed": "fat", // Don't using at the moment..
+			"sound": null, // Not being used yet
+			"wearableAttachment": true,
+			"clothescategory": "head",
+			"warmth": 0.1 // Base Value
+		},
+		"@.*-(torch-on)": {
+			"combustibleFuelUsed": "candle", // Don't working at the moment..
+			"sound": "game:sounds/effect/extinguish", // when the light turn off.
+			"wearableAttachment": true,
+			"clothescategory": "head",
+			"warmth": 0.2, // Base Value
+			"warmth-bouse": 0.35
+		},
+		"@.*-(candle1-on|candle2-on)": {
+			"combustibleFuelUsed": "fat", // Don't working at the moment..
+			"sound": "game:sounds/effect/extinguish", // when the light turn off.
+			"wearableAttachment": true,
+			"clothescategory": "head",
+			"warmth": 0.1, // Base Value
+			"warmth-bouse": 0.25
+		},
+		"@.*-(torch-off|candle1-off|candle2-off)": {
+			"combustibleFuelUsed": "candle", // Don't working at the moment..
+			"sound": null, // Not being used yet
+			"wearableAttachment": true,
+			"clothescategory": "head",
+			"warmth": 0.1 // Base Value
+		}
+	},
+	"texturesByType": {
+		"@.*-(oil-lamp-on|oil-lamp-off|torch-off|torch-on|candle1-off|candle1-on|candle2-off|candle2-on)": {
+			"seraph": { "base": "game:block/transparent" }
+		},
+		"*": {
+			"seraph": { "base": "awearablelight:entity/humanoid/seraphclothes/{category}/{head}" }
+		}
+	},
+	"creativeinventory": {
+		"general": [ "@.*-(oil-lamp-off|torch-off|candle1-off|candle2-off)" ],
+		"items": [ "@.*-(oil-lamp-off|torch-off|candle1-off|candle2-off)" ],
+		"clothing": [ "@.*-(oil-lamp-off|torch-off|candle1-off|candle2-off)" ],
+		"awearablelight": [ "@.*-(oil-lamp-off|torch-off|candle1-off|candle2-off)" ]
+	},
+	"lightHsvbyType": {
+		"@.*-(oil-lamp-on)": [ 4, 2, 9 ],
+		"@.*-(torch-on)": [ 10, 5, 12 ],
+		"@.*-(candle1-on)": [ 9, 3, 4 ],
+		"@.*-(candle2-on)": [ 9, 4, 6 ]
+	},
+	"heldRightReadyAnimation": null,
+	"renderAlphaTest": 0.25,
+	"fpHandTransformByType": {
+		"@.*-(oil-lamp-on|oil-lamp-off|torch-off|torch-on|candle1-off|candle1-on|candle2-off|candle2-on)": {
+			"translation": {
+				"x": 0.5,
+				"y": -1.8,
+				"z": -0.4
+			},
+			"rotation": {
+				"x": 180,
+				"y": -108,
+				"z": -180
+			},
+			"origin": {
+				"x": 0.5,
+				"y": 1.6,
+				"z": 0.5
+			},
+			"scale": 2.15
+		}
+	},
+	"tpHandTransformByType": {
+		"@.*-(oil-lamp-on|oil-lamp-off|torch-off|torch-on|candle1-off|candle1-on|candle2-off|candle2-on)": {
+			"translation": {
+				"x": -0.75,
+				"y": -2.3,
+				"z": -0.38
+			},
+			"rotation": {
+				"x": -95,
+				"y": 90,
+				"z": -1
+			},
+			"origin": {
+				"x": 0.5,
+				"y": 1.5,
+				"z": 0.5
+			},
+			"scale": 0.7
+		}
+	},
+	"guiTransformByType": {
+		"@.*-(torch-on|torch-off)": {
+			"translation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"rotation": {
+				"x": 0,
+				"y": 72,
+				"z": 5
+			},
+			"origin": {
+				"x": 0.46,
+				"y": 1.85,
+				"z": 0.5
+			},
+			"scale": 3.7
+		},
+		"@.*-(oil-lamp-on|oil-lamp-off|candle1-off|candle1-on|candle2-off|candle2-on)": {
+			"translation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"rotation": {
+				"x": 180,
+				"y": -70,
+				"z": 30
+			},
+			"origin": {
+				"x": 0.45,
+				"y": 1.85,
+				"z": 0.52
+			},
+			"scale": 3.7
+		}
+	},
+	"groundTransformByType": {
+		"@.*-(oil-lamp-on|oil-lamp-off|torch-off|torch-on|candle1-off|candle1-on|candle2-off|candle2-on)": {
+			"translation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"origin": {
+				"x": 0.5,
+				"y": 1.8,
+				"z": 0.5
+			},
+			"scale": 3
+		}
+	}
+}

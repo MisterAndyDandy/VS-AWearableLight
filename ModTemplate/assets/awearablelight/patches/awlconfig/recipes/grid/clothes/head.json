@@ -1,0 +1,32 @@
+[
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "awearablelight:recipes/grid/clothes/head/candle1.json",
+    "condition": {
+      "when": "DisableRecipes",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "awearablelight:recipes/grid/clothes/head/candle2.json",
+    "condition": {
+      "when": "DisableRecipes",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "awearablelight:recipes/grid/clothes/head/oillamp.json",
+    "condition": {
+      "when": "DisableRecipes",
+      "isValue": "true"
+    }
+  }
+]

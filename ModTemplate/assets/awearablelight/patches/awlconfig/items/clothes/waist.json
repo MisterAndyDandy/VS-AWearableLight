@@ -1,0 +1,12 @@
+[
+  {
+    "op": "add",
+    "path": "/enabled",
+    "value": false,
+    "file": "awearablelight:itemtypes/clothes/waist.json",
+    "condition": {
+      "when": "DisableItem",
+      "isValue": "true"
+    }
+  }
+]

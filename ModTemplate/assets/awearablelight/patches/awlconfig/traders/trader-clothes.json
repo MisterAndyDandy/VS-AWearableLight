@@ -1,0 +1,222 @@
+[
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/buying/list/0",
+    "value": {
+      "code": "awearablelight:clothes-waist-heavy-belt-brass-lantern-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.25
+      },
+      "price": {
+        "avg": 4,
+        "var": 1
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/buying/list/1",
+    "value": {
+      "code": "awearablelight:clothes-head-torch-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.25
+      },
+      "price": {
+        "avg": 3,
+        "var": 0.75
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/buying/list/2",
+    "value": {
+      "code": "awearablelight:clothes-head-candle1-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.5
+      },
+      "price": {
+        "avg": 1,
+        "var": 0.75
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/buying/list/3",
+    "value": {
+      "code": "awearablelight:clothes-head-candle2-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.25
+      },
+      "price": {
+        "avg": 2,
+        "var": 0.75
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/buying/list/4",
+    "value": {
+      "code": "awearablelight:clothes-head-oil-lamp-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.5
+      },
+      "price": {
+        "avg": 1,
+        "var": 0.25
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/selling/list/0",
+    "value": {
+      "code": "awearablelight:clothes-waist-heavy-belt-brass-lantern-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.25
+      },
+      "price": {
+        "avg": 3,
+        "var": 1
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/selling/list/1",
+    "value": {
+      "code": "awearablelight:clothes-head-torch-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.25
+      },
+      "price": {
+        "avg": 3,
+        "var": 0.75
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/selling/list/2",
+    "value": {
+      "code": "awearablelight:clothes-head-candle1-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.5
+      },
+      "price": {
+        "avg": 1,
+        "var": 0.75
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/selling/list/3",
+    "value": {
+      "code": "awearablelight:clothes-head-candle2-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.25
+      },
+      "price": {
+        "avg": 2,
+        "var": 0.75
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/attributes/tradeProps/selling/list/4",
+    "value": {
+      "code": "awearablelight:clothes-head-oil-lamp-off",
+      "type": "item",
+      "stacksize": 1,
+      "stock": {
+        "avg": 1,
+        "var": 0.25
+      },
+      "price": {
+        "avg": 1,
+        "var": 0.25
+      }
+    },
+    "file": "game:entities/humanoid/trader-clothing.json",
+    "condition": {
+      "when": "DisableTradable",
+      "isValue": "true"
+    }
+  }
+]

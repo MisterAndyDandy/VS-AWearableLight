@@ -1,0 +1,11 @@
+{
+	"item-clothes-head-torch-on": "Torche frontale(allum�e)",
+	"item-clothes-head-torch-off": "Torche frontale(�teint)",
+	"item-clothes-head-candle1-on": "Bougie (allum�e)",
+	"item-clothes-head-candle1-off": "Bougie (�teint)",
+	"item-clothes-head-candle2-on": "Bougie (allum�e)",
+	"item-clothes-head-candle2-off": "Bougie (�teint)",
+	"item-basepart-*":  "Bougie (Base)",
+	
+	"game:heldhelp-headlantern-rightclick": "alterner l'�clairage frontal"
+} 

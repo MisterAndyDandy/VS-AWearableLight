@@ -1,0 +1,17 @@
+[
+	{
+		"op": "add",
+		"path": "/lightHsv",
+		"value": [
+			32,
+			6,
+			5
+		],
+		"file": "locustmod:itemtypes/wearable/bowhelm.json",
+		"dependsOn": [ { "modid": "locustmod2" } ],
+		"condition": {
+			"when": "TemporalTinkerer",
+			"isValue": "true"
+		}
+	}
+]

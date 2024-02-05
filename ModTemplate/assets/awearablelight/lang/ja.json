@@ -1,0 +1,24 @@
+{
+	// Japanese localization file for 'A Wearable Light'.
+	// Mod Version: v1.0.4
+	// Translated By: Macoto Hino
+	// Machine translation using PCOT and DeepL.
+
+	"item-clothes-head-torch-on": "ヘッドライト(オン)",
+	"item-clothes-head-torch-off": "ヘッドライト(オフ)",
+
+	"item-clothes-head-oil-lamp-on": "オイルランプ(点灯)",
+	"item-clothes-head-oil-lamp-off": "オイルランプ(未点灯)",
+
+	"item-clothes-head-candle1-on": "蝋燭(点灯)",
+	"item-clothes-head-candle1-off": "蝋燭(未点灯)",
+	"item-clothes-head-candle2-on": "蝋燭(点灯)",
+	"item-clothes-head-candle2-off": "蝋燭(未点灯)",
+
+	"item-basepart-*": "蝋燭(土台)",
+
+	"item-clothes-waist-heavy-belt-brass-lantern-off": "真鍮のランタン付ベルト(未点灯)",
+	"item-clothes-waist-heavy-belt-brass-lantern-on": "真鍮のランタン付ベルト(点灯)",
+
+	"item-backpack": "革のバックパック(真鍮のランタン付)"
+} 

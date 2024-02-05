@@ -1,0 +1,62 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	  "elements": [
+    {
+      "name": "bag_base",
+      "from": [0, 0, 0],
+      "to": [1, 0.25, 1],
+      "faces": {
+        "north": { "texture": "#front", "uv": [0, 0, 16, 16] },
+        "south": { "texture": "#back", "uv": [0, 0, 16, 16] },
+        "west": { "texture": "#side", "uv": [0, 0, 16, 16] },
+        "east": { "texture": "#side", "uv": [0, 0, 16, 16] },
+        "up": { "texture": "#top", "uv": [0, 0, 16, 16] },
+        "down": { "texture": "#bottom", "uv": [0, 0, 16, 16] }
+      }
+    },
+    {
+      "name": "bag_lid",
+      "from": [0, 0.25, 0],
+      "to": [1, 0.375, 1],
+      "faces": {
+        "north": { "texture": "#front", "uv": [0, 16, 16, 20] },
+        "south": { "texture": "#back", "uv": [0, 16, 16, 20] },
+        "west": { "texture": "#side", "uv": [0, 16, 16, 20] },
+        "east": { "texture": "#side", "uv": [0, 16, 16, 20] },
+        "up": { "texture": "#lid_top", "uv": [0, 0, 16, 4] },
+        "down": { "texture": "#lid_bottom", "uv": [0, 0, 16, 4] }
+      }
+    },
+    {
+      "name": "bag_handle",
+      "from": [0.25, 0.375, 0.375],
+      "to": [0.75, 0.5, 0.625],
+      "faces": {
+        "north": { "texture": "#handle", "uv": [0, 0, 16, 16] },
+        "south": { "texture": "#handle", "uv": [0, 0, 16, 16] },
+        "west": { "texture": "#handle", "uv": [0, 0, 16, 16] },
+        "east": { "texture": "#handle", "uv": [0, 0, 16, 16] },
+        "up": { "texture": "#handle_top", "uv": [0, 0, 16, 16] },
+        "down": { "texture": "#handle_bottom", "uv": [0, 0, 16, 16] }
+      }
+    }
+  ],
+  "textures": {
+    "bottom": "yourmodnamespace:blocks/bottom",
+    "top": "yourmodnamespace:blocks/top",
+    "front": "yourmodnamespace:blocks/front",
+    "back": "yourmodnamespace:blocks/back",
+    "side": "yourmodnamespace:blocks/side",
+    "flap_top": "yourmodnamespace:blocks/flap_top",
+    "flap_bottom": "yourmodnamespace:blocks/flap_bottom"
+  }
+}
+	
+ 

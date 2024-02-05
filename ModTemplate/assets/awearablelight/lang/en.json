@@ -1,0 +1,24 @@
+{
+	"item-clothes-head-torch-on": "Head torch (On)",
+	"item-clothes-head-torch-off": "Head torch (Off)",
+
+	"item-clothes-head-oil-lamp-on": "Oil lamp (Lit)",
+	"item-clothes-head-oil-lamp-off": "Oil lamp (Unlit)",
+
+	"item-clothes-head-candle1-on": "Candle (Lit)",
+	"item-clothes-head-candle1-off": "Candle (Unlit)",
+	"item-clothes-head-candle2-on": "Candle (Lit)",
+	"item-clothes-head-candle2-off": "Candle (Unlit)",
+
+	"item-basepart-*": "Candle (Base)",
+
+	"item-clothes-waist-heavy-belt-brass-lantern-off": "Brass Lantern (Unlit)",
+	"item-clothes-waist-heavy-belt-brass-lantern-on": "Brass Lantern (Lit)",
+
+	"item-backpack": "Backpack (Brass Lantern)",
+
+
+	"game:heldhelp-headlantern-rightclick": "Toggle light",
+	"game:heldhelp-bags-rightclick": "Equip",
+	"game:tabname-awearablelight": "A Wearable Light"
+} 

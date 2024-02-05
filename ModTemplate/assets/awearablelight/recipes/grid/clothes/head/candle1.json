@@ -1,0 +1,26 @@
+{
+  "ingredientPattern": "B,K,P",
+  "ingredients": {
+    "B": {
+      "type": "item",
+      "code": "game:candle",
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "awearablelight:basepart-candle1",
+      "quantity": 1
+    },
+    "P": {
+      "type": "item",
+      "code": "game:leather-plain",
+      "quantity": 2
+    }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-head-candle1-off"
+  }
+}

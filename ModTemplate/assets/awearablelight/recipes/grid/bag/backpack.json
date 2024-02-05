@@ -1,0 +1,27 @@
+{
+  "ingredientPattern": "B,P",
+  "ingredients": {
+    "B": {
+      "type": "item",
+      "code": "game:backpack",
+      "quantity": 1
+    },
+    "P": {
+      "type": "block",
+      "code": "game:lantern-up",
+      "attributes": {
+        "material": "brass",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "quantity": 1
+    }
+  },
+  "attributes": {"hide": true},
+  "width": 1,
+  "height": 2,
+  "output": {
+    "type": "item",
+    "code": "awearablelight:backpack"
+  }
+}

@@ -1,0 +1,38 @@
+{
+	"editor": {
+		"allAngles": true,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+  "elements": [
+    {
+      "name": "bag_base",
+      "from": [0, 0, 0],
+      "to": [1, 0.125, 1],
+      "faces": {
+        "north": { "texture": "#front", "uv": [0, 0, 16, 2] },
+        "south": { "texture": "#back", "uv": [0, 0, 16, 2] },
+        "west": { "texture": "#side", "uv": [0, 0, 16, 2] },
+        "east": { "texture": "#side", "uv": [0, 0, 16, 2] },
+        "up": { "texture": "#top", "uv": [0, 0, 16, 2] },
+        "down": { "texture": "#bottom", "uv": [0, 0, 16, 2] }
+      }
+    },
+    {
+      "name": "bag_flap",
+      "from": [0, 0.125, 0],
+      "to": [1, 0.625, 1],
+      "faces": {
+        "north": { "texture": "#front", "uv": [0, 2, 16, 8] },
+        "south": { "texture": "#back", "uv": [0, 2, 16, 8] },
+        "west": { "texture": "#side", "uv": [0, 2, 16, 8] },
+        "east": { "texture": "#side", "uv": [0, 2, 16, 8] },
+        "up": { "texture": "#flap_top", "uv": [0, 0, 16, 6] },
+        "down": { "texture": "#flap_bottom", "uv": [0, 0, 16, 6] }
+      }
+    }
+  ]
+]}
