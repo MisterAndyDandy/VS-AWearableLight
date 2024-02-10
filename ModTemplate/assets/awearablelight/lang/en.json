@@ -20,5 +20,7 @@
 
 	"game:heldhelp-headlantern-rightclick": "Toggle light",
 	"game:heldhelp-bags-rightclick": "Equip",
-	"game:tabname-awearablelight": "A Wearable Light"
+	"game:tabname-awearablelight": "A Wearable Light",
+
+	"awearablelight:keybind-description": "Use for toggling light (On/Off)"
 } 

@@ -106,6 +106,42 @@ namespace AWearableLight
             return false;
         }
 
+       public virtual bool LightToggle
+        {
+            get
+            {
+                if (api.Side == EnumAppSide.Client) return false;
+
+                foreach (IPlayer player in api.World.AllPlayers)
+                {
+                    if (player != null)
+                    {
+                        ItemSlot rightHand = player.Entity.RightHandItemSlot;
+
+                        if (rightHand.Empty) return false;
+
+                        if (rightHand.Itemstack.Collectible is ItemAttachmentableLight attachmentableLight)
+                        {
+                            rightHand.Itemstack = new ItemStack(api.World.GetItem(new AssetLocation(attachmentableLight.Code.Domain, attachmentableLight.GetAssetLocation())))
+                            {
+                                Attributes = rightHand.Itemstack.Attributes.Clone()
+                            };
+                            rightHand.MarkDirty();
+
+                            player.InventoryManager.BroadcastHotbarSlot();
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+
+                return true;
+            }
+        }
+
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
         {
             #region Light

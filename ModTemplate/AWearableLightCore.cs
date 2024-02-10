@@ -10,6 +10,9 @@ using Vintagestory.API;
 using Vintagestory.API.Client;
 using System;
 using Vintagestory.API.Config;
+using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Server;
+using Microsoft.VisualBasic;
 
 namespace AWearableLight
 {
@@ -21,6 +24,12 @@ namespace AWearableLight
         public static string ModId { get; private set; }
         public static ILogger ModLogger { get; private set; }
 
+        public static ICoreClientAPI capi { get; private set; }
+
+        public static ICoreServerAPI sapi { get; private set; }
+
+        public GlKeys DEFAULT_KEY = GlKeys.L;
+
         public static ActionConsumable<KeyCombination> actionConsumable { get; private set; }
 
         public override void StartPre(ICoreAPI api)
@@ -28,6 +37,13 @@ namespace AWearableLight
             base.StartPre(api);
             ModId = Mod.Info.ModID;
             ModLogger = Mod.Logger;
+            if (api.Side == EnumAppSide.Client)
+            {
+                capi = api as ICoreClientAPI;
+            }
+            else {
+                sapi = api as ICoreServerAPI;   
+            }
         }
         public override void Start(ICoreAPI api)
         {
@@ -35,7 +51,7 @@ namespace AWearableLight
 
             api.RegisterItemClass("AttachmentableLight", typeof(ItemAttachmentableLight));
             api.RegisterCollectibleBehaviorClass("CollectibleBagsBehavior", typeof(CollectibleBagsBehavior));
-        
+
             var config = Config.Current = api.LoadOrCreateConfig<Config>(Mod.Info.Name.UcFirst() + ".json", ModLogger);
             JsonConfig(api, config);
          
@@ -46,16 +62,60 @@ namespace AWearableLight
                 api.Logger.Notification("// * " + this.Mod.Info.Name.ToString().UcFirst() + "Ended" + " * //");
             }
 
-     
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+        }
+
+
+        public override void StartServerSide(ICoreServerAPI api)
+        {
+            base.StartServerSide(api);
+            if (api.Side == EnumAppSide.Server)
+            {
+                sapi = api;
+            }
         }
 
         public override void StartClientSide(ICoreClientAPI api)
         {
             base.StartClientSide(api);
 
-            //api.Input.RegisterHotKey("togglelight", Lang.Get("awearablelight:keybind-description"), GlKeys.L, HotkeyType.CharacterControls);
+            capi = api;
+
+            api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-description"), DEFAULT_KEY, HotkeyType.CharacterControls, false, false, false);
+            api.Input.SetHotKeyHandler("toggleLight", (KeyCombination _) => LightToggle());
+        }
+
+       
+        private bool LightToggle()
+        { 
+            if (sapi == null || capi == null) return false;
+
+            IPlayer player = sapi.World.PlayerByUid(capi.World.Player.PlayerUID);
+
+            if (player != null)
+            {
+                ItemSlot rightHand = player.Entity.RightHandItemSlot;
+
+                if (rightHand.Empty) return false;
+
+                if (rightHand.Itemstack.Collectible is ItemAttachmentableLight attachmentableLight)
+                {
+                    rightHand.Itemstack = new ItemStack(sapi.World.GetItem(new AssetLocation(attachmentableLight.Code.Domain, attachmentableLight.GetAssetLocation())))
+                    {
+                        Attributes = rightHand.Itemstack.Attributes.Clone()
+                    };
+
+                    rightHand.MarkDirty();
+                    player.InventoryManager.BroadcastHotbarSlot();
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override void AssetsFinalize(ICoreAPI api)

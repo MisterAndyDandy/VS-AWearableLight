@@ -15,6 +15,8 @@ using Vintagestory.ServerMods.NoObf;
 using System.Configuration;
 using Vintagestory.API.Server;
 using HarmonyLib;
+using Vintagestory.API.Client;
+using CommonLib.Config;
 
 namespace AWearableLight.Util
 {
@@ -51,17 +53,23 @@ namespace AWearableLight.Util
                 }
                 this.Comment += "]" + postfix;
             }
+
         }
 
-        public Part<bool> DisableItem { get; set; }
-        public Part<bool> DisableRecipes { get; set; }
+   
+        [ClientOnly]
         public Part<bool> DisableSound { get; set; }
+
+        public Part<bool> DisableItem { get; set; }
+
+        public Part<bool> DisableRecipes { get; set; }
+
         public Part<bool> DisableTradable { get; set; }
+
         public Part<bool> TemporalTinkerer { get; set; }
 
         public Config()
         {
-           
             DisableItem = new Part<bool>(false, "Removing items from game");
             DisableRecipes = new Part<bool>(false, "Removing items recipes from game");
             DisableSound = new Part<bool>(false, "On/Off sounds for items when being turn on and off.");
