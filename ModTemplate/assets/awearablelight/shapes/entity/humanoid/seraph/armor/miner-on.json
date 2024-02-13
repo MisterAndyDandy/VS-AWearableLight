@@ -1,0 +1,100 @@
+{
+	"editor": {
+		"backDropShape": "entity/humanoid/seraph-hairless",
+		"collapsedPaths": "Root/bandN/toothR1,Root/bandN/toothL1",
+		"allAngles": true,
+		"entityTextureMode": false
+	},
+	"textureWidth": 64,
+	"textureHeight": 64,
+	"textureSizes": {
+	},
+	"textures": {
+		"miner": "entity/humanoid/serapharmors/miner-on"
+	},
+	"elements": [
+		{
+			"name": "MiningHelmet",
+			"stepParentName": "Head",
+			"from": [ -0.9, 1.0, -1.0 ],
+			"to": [ 7.1, 5.0, 6.0 ],
+			"rotationOrigin": [ -0.9, 1.3, -1.6 ],
+			"faces": {
+				"north": { "texture": "#miner", "uv": [ 16.0, 8.0, 24.0, 12.0 ], "autoUv": false },
+				"east": { "texture": "#miner", "uv": [ 0.0, 8.0, 8.0, 12.0 ], "autoUv": false },
+				"south": { "texture": "#miner", "uv": [ 24.0, 8.0, 32.0, 12.0 ], "autoUv": false },
+				"west": { "texture": "#miner", "uv": [ 8.0, 7.0, 16.0, 12.0 ], "autoUv": false },
+				"up": { "texture": "#miner", "uv": [ 8.0, 0.0, 16.0, 8.0 ], "rotation": 90, "autoUv": false },
+				"down": { "texture": "#miner", "uv": [ 0.0, 16.0, 12.0, 28.0 ], "rotation": 270, "autoUv": false }
+			},
+			"children": [
+				{
+					"name": "Lamp",
+					"from": [ -0.55, 2.5, 2.0 ],
+					"to": [ -0.05, 5.5, 5.0 ],
+					"rotationOrigin": [ -1.0, 1.0, 1.0 ],
+					"faces": {
+						"north": { "texture": "#miner", "uv": [ 0.0, 28.0, 3.0, 28.5 ], "rotation": 90 },
+						"east": { "texture": "#miner", "uv": [ 36.0, 0.0, 40.0, 3.0 ], "autoUv": false },
+						"south": { "texture": "#miner", "uv": [ 6.0, 28.0, 9.0, 28.5 ], "rotation": 90 },
+						"west": { "texture": "#miner", "uv": [ 12.0, 22.0, 18.0, 28.0 ], "autoUv": false },
+						"up": { "texture": "#miner", "uv": [ 3.0, 28.0, 6.0, 28.5 ], "rotation": 90 },
+						"down": { "texture": "#miner", "uv": [ 9.0, 28.0, 12.0, 28.5 ], "rotation": 90 }
+					},
+					"children": [
+						{
+							"name": "RodRight",
+							"from": [ 0.3, 1.8, 0.5 ],
+							"to": [ 1.8, 2.3, 1.0 ],
+							"rotationOrigin": [ 1.0, 2.0, 0.0 ],
+							"faces": {
+								"north": { "texture": "#miner", "uv": [ 18.0, 29.0, 19.0, 30.0 ] },
+								"east": { "texture": "#miner", "uv": [ 19.0, 29.0, 20.0, 30.0 ] },
+								"south": { "texture": "#miner", "uv": [ 20.0, 29.0, 21.0, 30.0 ] },
+								"west": { "texture": "#miner", "uv": [ 21.0, 29.0, 22.0, 30.0 ] },
+								"up": { "texture": "#miner", "uv": [ 18.0, 28.0, 19.0, 29.0 ] },
+								"down": { "texture": "#miner", "uv": [ 19.0, 28.0, 20.0, 29.0 ] }
+							}
+						},
+						{
+							"name": "RodLeft",
+							"from": [ 0.3, 1.8, 2.0 ],
+							"to": [ 1.8, 2.3, 2.5 ],
+							"rotationOrigin": [ 1.0, 2.0, 2.0 ],
+							"faces": {
+								"north": { "texture": "#miner", "uv": [ 18.0, 29.0, 19.0, 30.0 ] },
+								"east": { "texture": "#miner", "uv": [ 19.0, 29.0, 20.0, 30.0 ] },
+								"south": { "texture": "#miner", "uv": [ 20.0, 29.0, 21.0, 30.0 ] },
+								"west": { "texture": "#miner", "uv": [ 21.0, 29.0, 22.0, 30.0 ] },
+								"up": { "texture": "#miner", "uv": [ 18.0, 28.0, 19.0, 29.0 ] },
+								"down": { "texture": "#miner", "uv": [ 19.0, 28.0, 20.0, 29.0 ] }
+							}
+						},
+						{
+							"name": "Light",
+							"from": [ -0.015, 0.5, 0.5 ],
+							"to": [ -0.015, 2.5, 2.5 ],
+							"rotationOrigin": [ -0.45, -1.5, -1.0 ],
+							"faces": {
+								"east": { "texture": "#miner", "uv": [ 13.0, 23.0, 17.0, 27.0 ], "autoUv": false }
+							}
+						}
+					]
+				},
+				{
+					"name": "TopPlate",
+					"from": [ 0.5, 3.5, 0.5 ],
+					"to": [ 7.5, 5.0, 6.5 ],
+					"rotationOrigin": [ 0.0, 3.0, 0.0 ],
+					"faces": {
+						"north": { "texture": "#miner", "uv": [ 1.0, 11.0, 7.0, 12.0 ], "autoUv": false },
+						"east": { "texture": "#miner", "uv": [ 17.0, 11.0, 23.0, 12.0 ], "autoUv": false },
+						"south": { "texture": "#miner", "uv": [ 25.0, 11.0, 31.0, 12.0 ], "autoUv": false },
+						"west": { "texture": "#miner", "uv": [ 18.0, 11.0, 22.0, 12.0 ], "autoUv": false },
+						"up": { "texture": "#miner", "uv": [ 9.0, 1.0, 15.0, 7.0 ], "autoUv": false },
+						"down": { "texture": "#miner", "uv": [ 2.0, 2.0, 9.0, 8.0 ] }
+					}
+				}
+			]
+		}
+	]}

@@ -18,9 +18,9 @@
 	"item-backpack": "Backpack (Brass Lantern)",
 
 
-	"game:heldhelp-headlantern-rightclick": "Toggle light",
+	"game:heldhelp-toggle": "Toggle light",
 	"game:heldhelp-bags-rightclick": "Equip",
 	"game:tabname-awearablelight": "A Wearable Light",
 
-	"awearablelight:keybind-description": "Use for toggling light (On/Off)"
+	"awearablelight:keybind-description": "Toggle light"
 } 

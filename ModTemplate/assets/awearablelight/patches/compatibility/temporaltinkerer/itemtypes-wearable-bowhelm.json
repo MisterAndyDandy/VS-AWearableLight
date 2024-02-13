@@ -7,10 +7,10 @@
 			6,
 			5
 		],
-		"file": "locustmod:itemtypes/wearable/bowhelm.json",
-		"dependsOn": [ { "modid": "locustmod2" } ],
+		"file": "minerz:itemtypes/wearable/bowhelm.json",
+		"dependsOn": [ { "modid": "minerz" } ],
 		"condition": {
-			"when": "TemporalTinkerer",
+			"when": "Minerz",
 			"isValue": "true"
 		}
 	}

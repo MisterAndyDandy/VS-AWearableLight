@@ -1,43 +1,18 @@
-﻿using AWearableLight.Util;
-using AWearableLight;
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+
 
 namespace AWearableLight
 {
     class ItemAttachmentableLight : ItemWearable
     {
-
-        public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling)
-        {
-         
-            if (slot == null || byEntity == null) return;
-
-            if (handHandling != EnumHandHandling.PreventDefaultAnimation) {
-                
-                if (byEntity.Controls.CtrlKey)
-                {
-                    byEntity.Attributes.SetInt("use", 1);
-                    byEntity.Attributes.SetInt("useCancel", 0);
-                    ///byEntity.AnimManager.StartAnimation("interactstatic");
-                    handHandling = EnumHandHandling.PreventDefaultAnimation;
-                    return;
-                }
-            }
-       
-            base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handHandling);
-        }
-
         public override string GetHeldTpUseAnimation(ItemSlot activeHotbarSlot, Entity byEntity)
         {
             return null;
@@ -48,27 +23,18 @@ namespace AWearableLight
             return null;
         }
 
-        public override bool OnHeldInteractStep(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
-        {
-            (byEntity as EntityPlayer)?.Player?.InventoryManager.BroadcastHotbarSlot();
-            return secondsUsed < 1f;
-        }
+        public void OnUsedBy(ItemSlot itemSlot, EntityPlayer entityPlayer) {
 
-        public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
-        {
-            if(byEntity.Attributes.GetInt("usedCancel") == 1)
-
-            if (secondsUsed < 1f)
+            if (!AWearableLightCore.Config.DisableSound)
             {
-                    return;
-            }
-
-            if (!Config.Current.DisableSound.Value)
-            {
-                if (Attributes["sound"]?.Exists == true)
+                JsonObject attSound = Attributes["sound"];
+                if (attSound.Exists)
                 {
-                    var soundLocation = new AssetLocation(Attributes["sound"].ToString());
-                    byEntity.World.PlaySoundAt(soundLocation, byEntity.Pos.X + 0.5, byEntity.Pos.Y + 0.75, byEntity.Pos.Z + 0.5, null, randomizePitch: false, volume: 16f);
+                    if (attSound.AsString() != null)
+                    {
+                        var soundLocation = new AssetLocation(attSound.ToString());
+                        entityPlayer.World.PlaySoundAt(soundLocation, entityPlayer.Pos.X + 0.5, entityPlayer.Pos.Y + 0.75, entityPlayer.Pos.Z + 0.5, null, randomizePitch: false, volume: 16f);
+                    };
                 }
                 else
                 {
@@ -76,89 +42,33 @@ namespace AWearableLight
                 }
             }
 
-            byEntity.Attributes.SetInt("using", 1);
+            ItemStack itemStack = itemSlot.Itemstack;
 
-            //byEntity.AnimManager.StopAnimation("interactstatic");
+            if (itemStack == null) return;
 
-            slot.Itemstack = new ItemStack(api.World.GetItem(new AssetLocation(Code.Domain, GetAssetLocation())))
+            itemSlot.Itemstack = new ItemStack(api.World.GetItem(new AssetLocation(Code.Domain, GetAssetLocation)))
             {
-                Attributes = slot.Itemstack.Attributes.Clone()
+                Attributes = itemSlot.Itemstack.Attributes.Clone()
             };
 
-            slot.MarkDirty();
+            itemSlot.MarkDirty();
 
-            (byEntity as EntityPlayer)?.Player?.InventoryManager.BroadcastHotbarSlot();
-
-            base.OnHeldInteractStop(secondsUsed, slot, byEntity, blockSel, entitySel);
+            entityPlayer.Player.InventoryManager.BroadcastHotbarSlot();
         }
-
-        public override bool OnHeldInteractCancel(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, EnumItemUseCancelReason cancelReason)
-        {
-            byEntity.Attributes.SetInt("using", 0);
-            //byEntity.AnimManager.StopAnimation("interactstatic");
-            (byEntity as EntityPlayer)?.Player?.InventoryManager.BroadcastHotbarSlot();
-            if (cancelReason == EnumItemUseCancelReason.ReleasedMouse)
-            {
-                byEntity.Attributes.SetInt("usedCancel", 1);
-                return true;
-            }
-
-            return false;
-        }
-
-       public virtual bool LightToggle
-        {
-            get
-            {
-                if (api.Side == EnumAppSide.Client) return false;
-
-                foreach (IPlayer player in api.World.AllPlayers)
-                {
-                    if (player != null)
-                    {
-                        ItemSlot rightHand = player.Entity.RightHandItemSlot;
-
-                        if (rightHand.Empty) return false;
-
-                        if (rightHand.Itemstack.Collectible is ItemAttachmentableLight attachmentableLight)
-                        {
-                            rightHand.Itemstack = new ItemStack(api.World.GetItem(new AssetLocation(attachmentableLight.Code.Domain, attachmentableLight.GetAssetLocation())))
-                            {
-                                Attributes = rightHand.Itemstack.Attributes.Clone()
-                            };
-                            rightHand.MarkDirty();
-
-                            player.InventoryManager.BroadcastHotbarSlot();
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-
-
-                return true;
-            }
-        }
+        public string GetAssetLocation => Code.GetName().Substring(0, Code.GetName().Length - Code.EndVariant().Length) + (Code.EndVariant() == "off" ? "on" : "off");
 
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
         {
             #region Light
             // Ensure itemStack and Collectible are not null
             ItemStack itemStack = inSlot.Itemstack;
-            if (itemStack == null || itemStack.Collectible == null || itemStack.Collectible.LightHsv == null)
-            {
-                // Handle null case or return early
-                return;
-            }
 
-            byte[] lightHsv = GetLightHsv(world.BlockAccessor, null, itemStack);
+            byte[] lightHsv = itemStack.Collectible.LightHsv;
 
             // If lightHsv is not available, use original values
-            if (lightHsv.First() == 0)
+            if (lightHsv[0] == 0)
             {
-                lightHsv = new ItemStack(world.GetItem(new AssetLocation(Code.Domain, GetAssetLocation()))).Collectible.LightHsv;
+                lightHsv = new ItemStack(world.GetItem(new AssetLocation(Code.Domain, GetAssetLocation))).Collectible.LightHsv;
             }
 
             // Constants for indices
@@ -173,18 +83,16 @@ namespace AWearableLight
 
             #endregion
         }
-
-        public virtual string GetAssetLocation() => Code.GetName().Remove(Code.GetName().Length - Code.EndVariant().Length) + (Code.EndVariant() == "off" ? "on" : "off");
-
+ 
         public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot)
         {
             return new WorldInteraction[1]
             {
                 new WorldInteraction
                 {
-                    ActionLangCode = "heldhelp-headlantern-rightclick",
-                    MouseButton = EnumMouseButton.Right,
-                    HotKeyCode = "ctrl"
+                    ActionLangCode = Lang.GetMatching("heldhelp-toggle"),
+                    MouseButton = EnumMouseButton.None,
+                    HotKeyCode = "toggleLight"
                 }
             }.Append(base.GetHeldInteractionHelp(inSlot));
         }

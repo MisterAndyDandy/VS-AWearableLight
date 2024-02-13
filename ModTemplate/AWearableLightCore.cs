@@ -1,18 +1,11 @@
 ﻿using HarmonyLib;
 using System.Reflection;
 using Vintagestory.API.Common;
-using AWearableLight.Util;
-using CommonLib.Utils;
 using Vintagestory.API.Util;
-using Vintagestory.ServerMods.NoObf;
-using Vintagestory.GameContent;
-using Vintagestory.API;
 using Vintagestory.API.Client;
-using System;
 using Vintagestory.API.Config;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
-using Microsoft.VisualBasic;
+using CommonLib.Config;
 
 namespace AWearableLight
 {
@@ -20,6 +13,7 @@ namespace AWearableLight
     {
 
         Harmony harmony = new Harmony("com.misterandydandy.a.wearable.light");
+
         public static Config Config { get; private set; } = null!;
         public static string ModId { get; private set; }
         public static ILogger ModLogger { get; private set; }
@@ -28,15 +22,12 @@ namespace AWearableLight
 
         public static ICoreServerAPI sapi { get; private set; }
 
-        public GlKeys DEFAULT_KEY = GlKeys.L;
-
-        public static ActionConsumable<KeyCombination> actionConsumable { get; private set; }
-
         public override void StartPre(ICoreAPI api)
         {
             base.StartPre(api);
             ModId = Mod.Info.ModID;
             ModLogger = Mod.Logger;
+
             if (api.Side == EnumAppSide.Client)
             {
                 capi = api as ICoreClientAPI;
@@ -44,6 +35,7 @@ namespace AWearableLight
             else {
                 sapi = api as ICoreServerAPI;   
             }
+
         }
         public override void Start(ICoreAPI api)
         {
@@ -52,16 +44,12 @@ namespace AWearableLight
             api.RegisterItemClass("AttachmentableLight", typeof(ItemAttachmentableLight));
             api.RegisterCollectibleBehaviorClass("CollectibleBagsBehavior", typeof(CollectibleBagsBehavior));
 
-            var config = Config.Current = api.LoadOrCreateConfig<Config>(Mod.Info.Name.UcFirst() + ".json", ModLogger);
-            JsonConfig(api, config);
-         
-            if (api != null)
-            {
-                api.Logger.Notification("// * " + this.Mod.Info.Name.ToString().UcFirst() + "Started" + " * //");
-                api.Logger.Notification("I Will Light Your Way By " + this.Mod.Info.Name.ToString().UcFirst());
-                api.Logger.Notification("// * " + this.Mod.Info.Name.ToString().UcFirst() + "Ended" + " * //");
-            }
+            var configs = api.ModLoader.GetModSystem<ConfigManager>();
+            Config = configs.GetConfig<Config>();
 
+            api.Logger.Event("I see " + Mod.Info.Name.UcFirst());
+        
+            ModCompatibility(api);
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
@@ -70,10 +58,8 @@ namespace AWearableLight
         public override void StartServerSide(ICoreServerAPI api)
         {
             base.StartServerSide(api);
-            if (api.Side == EnumAppSide.Server)
-            {
-                sapi = api;
-            }
+
+            sapi = api;
         }
 
         public override void StartClientSide(ICoreClientAPI api)
@@ -82,37 +68,47 @@ namespace AWearableLight
 
             capi = api;
 
-            api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-description"), DEFAULT_KEY, HotkeyType.CharacterControls, false, false, false);
+            api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-description"), GlKeys.L, HotkeyType.CharacterControls, false, false, false);
             api.Input.SetHotKeyHandler("toggleLight", (KeyCombination _) => LightToggle());
         }
 
-       
-        private bool LightToggle()
-        { 
-            if (sapi == null || capi == null) return false;
-
-            IPlayer player = sapi.World.PlayerByUid(capi.World.Player.PlayerUID);
-
-            if (player != null)
+        private void ModCompatibility(ICoreAPI api)
+        {
+            foreach (Mod modCompat in api.ModLoader.Mods)
             {
-                ItemSlot rightHand = player.Entity.RightHandItemSlot;
+                bool matchedmod = api.Assets.Exists(new AssetLocation(ModId, "patches/compatibility/" + modCompat.Info.ModID + ".json"));
 
-                if (rightHand.Empty) return false;
+                if (!matchedmod) continue;
 
-                if (rightHand.Itemstack.Collectible is ItemAttachmentableLight attachmentableLight)
+                if (matchedmod)
                 {
-                    rightHand.Itemstack = new ItemStack(sapi.World.GetItem(new AssetLocation(attachmentableLight.Code.Domain, attachmentableLight.GetAssetLocation())))
+                    if (api.ModLoader.IsModEnabled(modCompat.Info.ModID))
                     {
-                        Attributes = rightHand.Itemstack.Attributes.Clone()
-                    };
-
-                    rightHand.MarkDirty();
-                    player.InventoryManager.BroadcastHotbarSlot();
+                        api.World.Config.SetBool(modCompat.Info.ModID.UcFirst(), true);
+                    }
                 }
             }
-            else
+        }
+
+        private bool LightToggle()
+        {
+            if (sapi != null || capi != null) 
             {
-                return false;
+                if (capi.World.Player != null)
+                {
+                    IPlayer player = sapi.World.PlayerByUid(capi.World.Player.PlayerUID);
+
+                    if (player != null)
+                    {
+                        ItemSlot ActiveHand = player.InventoryManager.ActiveHotbarSlot;
+
+                        if (ActiveHand.Itemstack.Collectible is ItemAttachmentableLight attachmentableLight)
+                        {
+                            attachmentableLight.OnUsedBy(ActiveHand, player.Entity);
+                          
+                        }
+                    }
+                }
             }
 
             return true;
@@ -132,17 +128,6 @@ namespace AWearableLight
             }
 
             base.AssetsFinalize(api);
-        }
-
-        public static void JsonConfig(ICoreAPI api, Config config)
-        {
-          
-            api.World.Config.SetBool("DisableItem", config.DisableItem.Value);
-            api.World.Config.GetBool("DisableSound", config.DisableSound.Value);
-            api.World.Config.SetBool("DisableRecipes", config.DisableRecipes.Value);
-            api.World.Config.SetBool("DisableTradable", config.DisableTradable.Value);
-            api.World.Config.SetBool("TemporalTinkerer", config.TemporalTinkerer.Value);
-
         }
 
         public override void Dispose()

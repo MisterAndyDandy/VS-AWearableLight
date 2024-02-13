@@ -11,6 +11,10 @@
       <HintPath>$(AppData)\Vintagestory\Lib\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ACulinaryArtillery">
+      <HintPath>..\ACulinaryArtillery.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="CommonLib">
       <HintPath>CommonLib.dll</HintPath>
       <Private>False</Private>
@@ -41,6 +45,8 @@
     <Content Include="assets\**">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Remove="assets\awearablelight\patches\compatibility\minerz\itemtypes-wearable-helmet.json" />
+    <None Remove="assets\awearablelight\patches\compatibility\minerz\minerz.json" />
 	<Content Include="modicon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -51,5 +57,15 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="assets\awearablelight\itemtypes\armors\compatibility\minerz\helmet.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="assets\awearablelight\patches\compatibility\minerz\" />
   </ItemGroup>
 </Project>

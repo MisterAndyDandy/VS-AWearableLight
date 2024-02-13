@@ -1,20 +1,22 @@
-﻿using AWearableLight.Util;
+﻿using ACulinaryArtillery;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
-using Vintagestory.Server;
+using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
-namespace AWearableLight
+namespace AWearableLight.Util
 {
 
     [HarmonyPatch(typeof(EntityPlayer))]
     [HarmonyPatch("LightHsv", MethodType.Getter)]
     public class EntityPlayer_LightHsv_Patched
     {
+
         [HarmonyPostfix]
         static void Harmony_EntityPlayer_LightHsv_Postfix(EntityPlayer __instance, ref byte[] __result)
         {
@@ -22,26 +24,26 @@ namespace AWearableLight
             if (__instance == null || !__instance.Alive || __instance.Player == null || __instance.Player.WorldData.CurrentGameMode == EnumGameMode.Spectator)
                 return;
 
-       
             PlayerLightHsvData.LightHsvData(__instance, ref __result);
         }
     }
 
     public class PlayerLightHsvData
     {
+
         public static void LightHsvData(EntityPlayer player, ref byte[] lightHsv)
         {
             // Your custom logic here to process the light HSV data or perform other actions
             // For example, adjust the light HSV values based on player conditions or settings
             // This method will be called after the getter has been invoked
             // Iterate through gear inventory slots
-            
+
             foreach (var slots in player.GearInventory)
             {
 
                 if (slots == null || slots.Empty) continue;
 
-                if (slots.Itemstack.Collectible.Code.EndVariant() == "off") continue;
+                if (slots.Itemstack.Collectible?.LightHsv[0] == 0) continue;
 
                 AdjustLightLevelForItemSlot(slots, ref lightHsv);
             }
