@@ -6,6 +6,9 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using CommonLib.Config;
+using Vintagestory.ServerMods.NoObf;
+using System;
+using System.Collections.Generic;
 
 namespace AWearableLight
 {
@@ -44,11 +47,16 @@ namespace AWearableLight
             api.RegisterItemClass("AttachmentableLight", typeof(ItemAttachmentableLight));
             api.RegisterCollectibleBehaviorClass("CollectibleBagsBehavior", typeof(CollectibleBagsBehavior));
 
-            var configs = api.ModLoader.GetModSystem<ConfigManager>();
-            Config = configs.GetConfig<Config>();
+            Config = api.ModLoader.GetModSystem<ConfigManager>().GetConfig<Config>();
+
+            if (Config != null)
+            {
+                JsonConfig(api, Config);
+            }
 
             api.Logger.Event("I see " + Mod.Info.Name.UcFirst());
-        
+
+  
             ModCompatibility(api);
 
             harmony.PatchAll(Assembly.GetExecutingAssembly());
@@ -76,15 +84,15 @@ namespace AWearableLight
         {
             foreach (Mod modCompat in api.ModLoader.Mods)
             {
-                bool matchedmod = api.Assets.Exists(new AssetLocation(ModId, "patches/compatibility/" + modCompat.Info.ModID + ".json"));
-
-                if (!matchedmod) continue;
+                string name = modCompat.Info.ModID;
+                List<AssetLocation> assetLocations = api.Assets.GetLocations("patches/compatibility/" + name + "/" + name, ModId);                
+                bool matchedmod = assetLocations.Count > 0;
 
                 if (matchedmod)
                 {
-                    if (api.ModLoader.IsModEnabled(modCompat.Info.ModID))
+                    if (api.ModLoader.IsModEnabled(name))
                     {
-                        api.World.Config.SetBool(modCompat.Info.ModID.UcFirst(), true);
+                        api.World.Config.SetBool(name.UcFirst(), true);
                     }
                 }
             }
@@ -102,6 +110,8 @@ namespace AWearableLight
                     {
                         ItemSlot ActiveHand = player.InventoryManager.ActiveHotbarSlot;
 
+                        if(ActiveHand.Empty) return false;
+
                         if (ActiveHand.Itemstack.Collectible is ItemAttachmentableLight attachmentableLight)
                         {
                             attachmentableLight.OnUsedBy(ActiveHand, player.Entity);
@@ -112,6 +122,15 @@ namespace AWearableLight
             }
 
             return true;
+        }
+
+        public void JsonConfig(ICoreAPI api, Config config)
+        {
+            api.World.Config.GetBool("Sound", config.Sound);
+            api.World.Config.SetBool("Item", config.Items);
+            api.World.Config.SetBool("Recipes", config.Recipes);
+            api.World.Config.SetBool("Tradable", config.Tradable);
+
         }
 
         public override void AssetsFinalize(ICoreAPI api)

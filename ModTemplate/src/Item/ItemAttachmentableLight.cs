@@ -25,7 +25,7 @@ namespace AWearableLight
 
         public void OnUsedBy(ItemSlot itemSlot, EntityPlayer entityPlayer) {
 
-            if (!AWearableLightCore.Config.DisableSound)
+            if (AWearableLightCore.Config.Sound)
             {
                 JsonObject attSound = Attributes["sound"];
                 if (attSound.Exists)

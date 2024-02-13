@@ -1,0 +1,154 @@
+{
+    "code": "armors",
+    "class": "AttachmentableLight",
+    "enabled": false,
+    "variantgroups": [
+        {
+            "code": "category",
+            "states": [ "head" ]
+        },
+        {
+            "code": "head",
+            "combine": "SelectiveMultiply",
+            "onVariant": "category",
+            "states": [
+                "miner-off",
+                "miner-on"
+            ]
+        }
+    ],
+    "shapeByType": {
+        "@.*-(miner-on|miner-off)": {
+            "base": "awearablelight:entity/humanoid/seraph/armor/{head}"
+        }
+    },
+    "heldTpIdleAnimation": "holdunderarm",
+    "storageFlags": 128,
+    "attributesByType": {
+        "@.*-(miner-on)": {
+            "combustibleFuelUsed": "fat", // Don't working at the moment..
+            "sound": "game:sounds/effect/extinguish", // when the light turn off.
+            "wearableAttachment": true,
+            "clothescategory": "armorhead",
+            "warmth": 0.1, // Base Value
+            "warmth-bouse": 0.25,
+            "disableElements": [
+                "Hair tile upper part",
+                "ponytailhigh",
+                "ponytaillow",
+                "hideme",
+                "sidehigh",
+                "sidelow"
+            ]
+        },
+        "@.*-(miner-off)": {
+            "combustibleFuelUsed": "fat", // Don't using at the moment..
+            "sound": null, // Not being used yet
+            "wearableAttachment": true,
+            "clothescategory": "armorhead",
+            "warmth": 0.1, // Base Value
+            "disableElements": [
+                "Hair tile upper part",
+                "ponytailhigh",
+                "ponytaillow",
+                "hideme",
+                "sidehigh",
+                "sidelow"
+            ]
+        }
+    },
+    "texturesByType": {
+        "@.*-(miner-on|miner-off)": {
+            "seraph": { "base": "game:block/transparent" }
+        },
+        "*": {
+            "seraph": { "base": "awearablelight:entity/humanoid/serapharmors/{head}" }
+        }
+    },
+    "creativeinventory": {
+        "general": [ "@.*-(miner-off)" ],
+        "items": [ "@.*-(miner-off)" ],
+        "clothing": [ "@.*-(miner-off)" ],
+        "awearablelight": [ "@.*-(miner-off)" ]
+    },
+    "lightHsvbyType": {
+        "@.*-(miner-on)": [ 10, 5, 12 ]
+    },
+    "heldRightReadyAnimation": null,
+    "renderAlphaTest": 0.25,
+    "durabilityByType": {
+        "*": 650
+    },
+    "guiTransform": {
+        "translation": {
+            "x": -3,
+            "y": -10,
+            "z": 0
+        },
+        "rotation": {
+            "x": 180,
+            "y": -54,
+            "z": 2
+        },
+        "origin": {
+            "x": 1,
+            "y": 2,
+            "z": 1
+        },
+        "scale": 2.05
+    },
+    "tpHandTransform": {
+        "translation": {
+            "x": -1.4,
+            "y": -2.1,
+            "z": -1
+        },
+        "rotation": {
+            "x": 0,
+            "y": -180,
+            "z": 0
+        },
+        "origin": {
+            "x": 0.5,
+            "y": 0.5,
+            "z": 0.5
+        },
+        "scale": 0.55
+    },
+    "groundTransform": {
+        "translation": {
+            "x": 0,
+            "y": -1.6,
+            "z": -1
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "origin": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "scale": 4.58
+    },
+    "fpHandTransform": {
+        "translation": {
+            "x": 0.08,
+            "y": -0.21,
+            "z": -0.5
+        },
+        "rotation": {
+            "x": -2,
+            "y": -5,
+            "z": 21
+        },
+        "origin": {
+            "x": 5,
+            "y": 2,
+            "z": 5
+        },
+        "scale": 1.93
+    }
+}

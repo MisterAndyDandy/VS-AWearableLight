@@ -17,8 +17,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -39,8 +39,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -61,8 +61,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -83,8 +83,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -105,8 +105,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -127,8 +127,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -149,8 +149,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -171,8 +171,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -193,8 +193,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   },
   {
@@ -215,8 +215,8 @@
     },
     "file": "game:entities/humanoid/trader-clothing.json",
     "condition": {
-      "when": "DisableTradable",
-      "isValue": "true"
+        "when": "Tradable",
+        "isValue": "true"
     }
   }
 ]
