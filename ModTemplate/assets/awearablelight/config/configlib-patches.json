@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "file": "awearablelight.json",
+  "patches": {
+    "boolean": {
+      "meleeweaponsframework:patches/recipes/grid/clothes/head.json": {
+        "0/enabled": "Item_patch"
+      },
+      "settings": [
+        {
+          "type": "separator",
+          "title": "General Setting"
+        },
+        {
+          "code": "Item_patch",
+          "ingui": "item_patch",
+          "type": "boolean",
+          "comment": "item-patch-desc",
+          "default": true
+        }
+      ]
+    }
+  }
+}

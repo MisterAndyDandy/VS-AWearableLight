@@ -9,6 +9,7 @@ using CommonLib.Config;
 using Vintagestory.ServerMods.NoObf;
 using System;
 using System.Collections.Generic;
+using Vintagestory.GameContent;
 
 namespace AWearableLight
 {
@@ -75,7 +76,7 @@ namespace AWearableLight
             base.StartClientSide(api);
 
             capi = api;
-
+        
             api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-description"), GlKeys.L, HotkeyType.CharacterControls, false, false, false);
             api.Input.SetHotKeyHandler("toggleLight", (KeyCombination _) => LightToggle());
         }
@@ -85,7 +86,9 @@ namespace AWearableLight
             foreach (Mod modCompat in api.ModLoader.Mods)
             {
                 string name = modCompat.Info.ModID;
-                List<AssetLocation> assetLocations = api.Assets.GetLocations("patches/compatibility/" + name + "/" + name, ModId);                
+
+                List<AssetLocation> assetLocations = api.Assets.GetLocations("patches/compatibility/" + name + "/" + name, ModId);             
+                
                 bool matchedmod = assetLocations.Count > 0;
 
                 if (matchedmod)
@@ -115,7 +118,7 @@ namespace AWearableLight
                         if (ActiveHand.Itemstack.Collectible is ItemAttachmentableLight attachmentableLight)
                         {
                             attachmentableLight.OnUsedBy(ActiveHand, player.Entity);
-                          
+                           
                         }
                     }
                 }
@@ -135,6 +138,7 @@ namespace AWearableLight
 
         public override void AssetsFinalize(ICoreAPI api)
         {
+         
             foreach (var item in api.World.Collectibles)
             {
                 if (item.Attributes != null)
@@ -145,7 +149,7 @@ namespace AWearableLight
                     }
                 }
             }
-
+    
             base.AssetsFinalize(api);
         }
 
@@ -155,4 +159,6 @@ namespace AWearableLight
             base.Dispose();
         }
     }
+
+   
 }

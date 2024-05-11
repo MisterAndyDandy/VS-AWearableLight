@@ -4,9 +4,10 @@
     "path": "/enabled",
     "value": false,
     "file": "awearablelight:recipes/smithing/candle1/basepart.json",
+    "side": "Server",
     "condition": {
-      "when": "DisableRecipes",
-      "isValue": "true"
+      "when": "Recipes",
+      "isValue": "false"
     }
   }
 ]

@@ -4,9 +4,10 @@
     "path": "/enabled",
     "value": false,
     "file": "awearablelight:itemtypes/clothes/waist.json",
+    "side": "Server",
     "condition": {
-      "when": "DisableItem",
-      "isValue": "true"
+      "when": "Item",
+      "isValue": "false"
     }
   }
 ]

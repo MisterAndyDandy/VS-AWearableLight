@@ -1,9 +1,9 @@
-﻿using ACulinaryArtillery;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Util;
@@ -11,7 +11,6 @@ using Vintagestory.GameContent;
 
 namespace AWearableLight.Util
 {
-
     [HarmonyPatch(typeof(EntityPlayer))]
     [HarmonyPatch("LightHsv", MethodType.Getter)]
     public class EntityPlayer_LightHsv_Patched

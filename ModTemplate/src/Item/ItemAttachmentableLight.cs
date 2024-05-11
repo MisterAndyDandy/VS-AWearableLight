@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Numerics;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -32,7 +33,10 @@ namespace AWearableLight
                 {
                     if (attSound.AsString() != null)
                     {
-                        var soundLocation = new AssetLocation(attSound.ToString());
+                        AssetLocation soundLocation = new AssetLocation(attSound.ToString());
+
+                        if(soundLocation == null) return;
+
                         entityPlayer.World.PlaySoundAt(soundLocation, entityPlayer.Pos.X + 0.5, entityPlayer.Pos.Y + 0.75, entityPlayer.Pos.Z + 0.5, null, randomizePitch: false, volume: 16f);
                     };
                 }
@@ -41,7 +45,7 @@ namespace AWearableLight
                     api.Logger.Error($"Cannot find sound attribute for item: {Code.GetName().ToLower()}");
                 }
             }
-
+    
             ItemStack itemStack = itemSlot.Itemstack;
 
             if (itemStack == null) return;
@@ -51,10 +55,13 @@ namespace AWearableLight
                 Attributes = itemSlot.Itemstack.Attributes.Clone()
             };
 
-            itemSlot.MarkDirty();
-
             entityPlayer.Player.InventoryManager.BroadcastHotbarSlot();
+
+            entityPlayer.OnReceivedClientPacket((Vintagestory.API.Server.IServerPlayer)entityPlayer.Player, 1000, itemStack.ToBytes());
+
+            itemSlot.MarkDirty();
         }
+
         public string GetAssetLocation => Code.GetName().Substring(0, Code.GetName().Length - Code.EndVariant().Length) + (Code.EndVariant() == "off" ? "on" : "off");
 
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
@@ -77,7 +84,6 @@ namespace AWearableLight
             // Check light level and append to description
             dsc.Append(lightHsv[ValueIndex] > 0 ? $"{Lang.Get("light-level")}{lightHsv[ValueIndex]}\n" : "");
 
-            
             // Continue with the base method
             base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
 

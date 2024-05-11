@@ -11,10 +11,6 @@
       <HintPath>$(AppData)\Vintagestory\Lib\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ACulinaryArtillery">
-      <HintPath>..\ACulinaryArtillery.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="CommonLib">
       <HintPath>CommonLib.dll</HintPath>
       <Private>False</Private>
@@ -45,17 +41,6 @@
     <Content Include="assets\**">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Remove="assets\awearablelight\patches\compatibility\minerz\**" />
-    <Content Remove="assets\awearablelight\patches\compatibility\minerz\**" />
-    <EmbeddedResource Remove="assets\awearablelight\patches\compatibility\minerz\**" />
-    <None Remove="assets\awearablelight\patches\compatibility\minerz\**" />
-    <None Remove="assets\awearablelight\itemtypes\armors\compatibility\minerz\helmet.json" />
-    <Content Include="assets\awearablelight\patches\compatibility\minerz\minerz_item_patches.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\awearablelight\patches\compatibility\minerz\minerz_recipes_patches.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
 	<Content Include="modicon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -63,16 +48,7 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="assets\awearablelight\patches\compatibility\minerz\minerz_item_patches.json" />
-    <None Include="assets\awearablelight\patches\compatibility\minerz\minerz_recipes_patches.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="assets\awearablelight\itemtypes\armors\compatibility\minerz\helmet.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Folder Include="assets\awearablelight\config\" />
   </ItemGroup>
 </Project>
