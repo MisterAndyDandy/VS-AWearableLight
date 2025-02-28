@@ -1,19 +1,32 @@
 {
-	"item-clothes-head-torch-on": "Lámpara potente (Encendida)",
-	"item-clothes-head-torch-off": "Lámpara potente (Apagada)",
+    "_comentarios": "Traducido por C4BR3R4 || Versión del Mod: 1.1.31 || Fecha de modificación: 20250228 || Registro: http://c4br3r4.es/index.php?topic=1294.0 ",
+    "item-clothes-head-torch-on": "Linterna Frontal (Encendida)",
+    "item-clothes-head-torch-off": "Linterna Frontal (Apagada)",
 
-	"item-clothes-head-oil-lamp-on": "Lampara de Aceite (Encendida)",
-	"item-clothes-head-oil-lamp-off": "Lampara de Aceite (Apagada)",
+    "item-clothes-head-oil-lamp-on": "Lámpara de Aceite Frontal (Encendida)",
+    "item-clothes-head-oil-lamp-off": "Lámpara de Aceite Frontal (Apagada)",
 
-	"item-clothes-head-candle1-on": "Lámpara de vela (Encendida)",
-	"item-clothes-head-candle1-off": "Lámpara de vela (Apagada)",
-	"item-clothes-head-candle2-on": "Lámpara con reflector (Encendida)",
-	"item-clothes-head-candle2-off": "Lámpara con reflector (Apagada)",
+    "item-clothes-head-candle1-on": "Vela Frontal (Encendida)",
+    "item-clothes-head-candle1-off": "Vela Frontal (Apagada)",
+    "item-clothes-head-candle2-on": "Vela Reflectora Frontal (Encendida)",
+    "item-clothes-head-candle2-off": "Vela Reflectora Frontal (Apagada)",
 
-	"item-clothes-waist-heavy-belt-brass-lantern-off": "Farol de Latón (Encendido)",
-	"item-clothes-waist-heavy-belt-brass-lantern-on": "Farol de Latón (Apagado)",
+    "item-basepart-*": "Portavelas",
 
-	"item-basepart-*": "Lámpara (Base)",
-	
-	"game:heldhelp-headlantern-rightclick": "Alternar luz"
-} 
+    "item-clothes-waist-heavy-belt-brass-lantern-off": "Cinturón con Farol de Latón (Apagado)",
+    "item-clothes-waist-heavy-belt-brass-lantern-on": "Cinturón Farol de Latón (Encendido)",
+
+    "item-backpack": "Mochila con Farol de Latón",
+
+
+    "game:heldhelp-toggle": "Encender o Apagar Luz",
+    "game:heldhelp-bags-rightclick": "Equipar",
+    "game:tabname-awearablelight": "Iluminación",
+
+    "awearablelight:keybind-description": "Mod 'A Wearable Light' ► Encender o Apagar Luz",
+
+    "setting-sound": "Sonido",
+    "setting-item": "Objeto",
+    "setting-recipe": "Receta",
+    "setting-trader": "Mercader"
+}
