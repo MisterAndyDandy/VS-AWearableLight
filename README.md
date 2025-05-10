@@ -1,1 +1,2 @@
-# VS - BlackSmithEnhancements
+# VS - AwearableLight
+
