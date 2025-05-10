@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace AWearableLight
 {
@@ -52,12 +54,12 @@ namespace AWearableLight
             if (slot == null || byEntity == null || !(byEntity.Api is ICoreAPI api))
                 return;
 
-            if (byEntity.Controls.ShiftKey)
+            if (byEntity.Controls.Sneak)
                 return;
 
-            if (byEntity is EntityPlayer playerEntity && playerEntity.Player is IPlayer player)
+            if (byEntity is EntityPlayer entityPlayer)
             {
-                IInventory playerInventory = player.InventoryManager.GetInventory(GlobalConstants.backpackInvClassName + "-" + player.PlayerUID);
+                IInventory playerInventory = entityPlayer.Player.InventoryManager.GetInventory(GlobalConstants.backpackInvClassName + "-" + entityPlayer.Player.PlayerUID);
 
                 int maxSlots = 4;
 

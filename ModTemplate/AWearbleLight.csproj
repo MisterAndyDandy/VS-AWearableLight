@@ -1,5 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -11,8 +10,8 @@
       <HintPath>$(AppData)\Vintagestory\Lib\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="CommonLib">
-      <HintPath>CommonLib.dll</HintPath>
+    <Reference Include="protobuf-net">
+      <HintPath>$(AppData)\Vintagestory\Lib\protobuf-net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VintagestoryAPI">
@@ -50,5 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\awearablelight\config\" />
+    <Folder Include="src\Entity\" />
   </ItemGroup>
 </Project>

@@ -1,13 +1,13 @@
 [
-  {
-    "op": "add",
-    "path": "/enabled",
-    "value": false,
-    "file": "awearablelight:itemtypes/clothes/waist.json",
-    "side": "Server",
-    "condition": {
-      "when": "Item",
-      "isValue": "false"
+    {
+        "op": "add",
+        "path": "/enabled",
+        "value": false,
+        "file": "awearablelight:itemtypes/clothes/waist.json",
+        "side": "Server",
+        "condition": {
+            "when": "EnableItem",
+            "isValue": "false"
+        }
     }
-  }
 ]

@@ -13,7 +13,7 @@
     },
     "P": {
       "type": "item",
-      "code": "game:leather-plain",
+      "code": "game:leather-normal-plain",
       "quantity": 2
     }
   },

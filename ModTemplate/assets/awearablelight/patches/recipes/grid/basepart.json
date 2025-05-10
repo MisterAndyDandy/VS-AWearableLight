@@ -6,7 +6,7 @@
     "file": "awearablelight:recipes/grid/metal/basepart.json",
     "side": "Server",
     "condition": {
-      "when": "Recipes",
+      "when": "EnableRecipe",
       "isValue": "false"
     }
   }

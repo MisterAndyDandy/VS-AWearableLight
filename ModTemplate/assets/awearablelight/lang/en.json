@@ -22,5 +22,10 @@
 	"game:heldhelp-bags-rightclick": "Equip",
 	"game:tabname-awearablelight": "A Wearable Light",
 
-	"awearablelight:keybind-description": "Toggle light"
-} 
+	"awearablelight:keybind-description": "Toggle light",
+
+	"setting-sound": "Sound",
+	"setting-item": "Item",
+	"setting-recipe": "Recipe",
+	"setting-trader": "Trader"
+}

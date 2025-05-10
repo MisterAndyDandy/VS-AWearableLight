@@ -2,18 +2,18 @@
   "ingredientPattern": "B,P",
   "ingredients": {
     "B": {
-      "type": "item",
-      "code": "game:backpack",
-      "quantity": 1
+        "type": "item",
+        "code": "game:backpack-normal",
+        "quantity": 1
     },
     "P": {
       "type": "block",
       "code": "game:lantern-up",
-      "attributes": {
-        "material": "brass",
-        "lining": "plain",
-        "glass": "quartz"
-      },
+        "attributes": {
+            "material": "brass",
+            "lining": "plain",
+            "glass": "quartz"
+        },
       "quantity": 1
     }
   },

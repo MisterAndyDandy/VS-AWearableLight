@@ -1,164 +1,136 @@
-﻿using HarmonyLib;
-using System.Reflection;
+﻿using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Util;
-using Vintagestory.API.Client;
 using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using CommonLib.Config;
-using Vintagestory.ServerMods.NoObf;
+using HarmonyLib;
+using Vintagestory.API.Util;
+using System.Linq;
 using System;
-using System.Collections.Generic;
+using System.Reflection;
 using Vintagestory.GameContent;
+using ProtoBuf;
+using AWearableLight.Config;
 
 namespace AWearableLight
 {
-    class AWearableLightCore : ModSystem
+    [ProtoContract]
+    public sealed class TogglePacket
     {
+        [ProtoMember(1)]
+        public byte[] ItemStack { get; set; }
+    }
 
-        Harmony harmony = new Harmony("com.misterandydandy.a.wearable.light");
-
-        public static Config Config { get; private set; } = null!;
+    public class AWearableLightCore : ModSystem
+    {
+        private static readonly string ConfigName = "AwearableLight.json";
+        public static ServerConfig Config;
         public static string ModId { get; private set; }
-        public static ILogger ModLogger { get; private set; }
+        public static ILogger Logger { get; private set; }
 
-        public static ICoreClientAPI capi { get; private set; }
-
-        public static ICoreServerAPI sapi { get; private set; }
+        private readonly Harmony _harmony = new("com.misterandydandy.AwearableLight");
+        private IClientNetworkChannel _clientToggleChannel;
+        private IServerNetworkChannel _serverToggleChannel;
 
         public override void StartPre(ICoreAPI api)
         {
             base.StartPre(api);
             ModId = Mod.Info.ModID;
-            ModLogger = Mod.Logger;
+            Logger = Mod.Logger;
 
-            if (api.Side == EnumAppSide.Client)
-            {
-                capi = api as ICoreClientAPI;
-            }
-            else {
-                sapi = api as ICoreServerAPI;   
-            }
+            LoadOrCreateConfig(api);
 
+            JsonConfig(api);
         }
+
+        private void LoadOrCreateConfig(ICoreAPI api)
+        {
+            try
+            {
+                Config = api.LoadModConfig<ServerConfig>(ConfigName) ?? new ServerConfig();
+                api.StoreModConfig(Config, ConfigName);
+                Logger.VerboseDebug($"Config file '{ConfigName}' loaded or created successfully.");
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Failed to load config file '{ConfigName}'. Error: {e.Message}");
+                Config = new ServerConfig();
+                api.StoreModConfig(Config, ConfigName);
+                Logger.Error("A new config file with default values has been created.");
+            }
+        }
+
         public override void Start(ICoreAPI api)
         {
             base.Start(api);
+            _harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             api.RegisterItemClass("AttachmentableLight", typeof(ItemAttachmentableLight));
             api.RegisterCollectibleBehaviorClass("CollectibleBagsBehavior", typeof(CollectibleBagsBehavior));
-
-            Config = api.ModLoader.GetModSystem<ConfigManager>().GetConfig<Config>();
-
-            if (Config != null)
-            {
-                JsonConfig(api, Config);
-            }
-
-            api.Logger.Event("I see " + Mod.Info.Name.UcFirst());
-
-  
-            ModCompatibility(api);
-
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-        }
-
-
-        public override void StartServerSide(ICoreServerAPI api)
-        {
-            base.StartServerSide(api);
-
-            sapi = api;
         }
 
         public override void StartClientSide(ICoreClientAPI api)
         {
             base.StartClientSide(api);
 
-            capi = api;
-        
-            api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-description"), GlKeys.L, HotkeyType.CharacterControls, false, false, false);
-            api.Input.SetHotKeyHandler("toggleLight", (KeyCombination _) => LightToggle());
+            _clientToggleChannel = api.Network.RegisterChannel("awearableLight")
+                .RegisterMessageType<TogglePacket>();
+
+            api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-description"), GlKeys.L, HotkeyType.CharacterControls);
+            api.Input.SetHotKeyHandler("toggleLight", _ => ToggleWearableItem(api.World.Player));
         }
 
-        private void ModCompatibility(ICoreAPI api)
+        public override void StartServerSide(ICoreServerAPI api)
         {
-            foreach (Mod modCompat in api.ModLoader.Mods)
-            {
-                string name = modCompat.Info.ModID;
+            base.StartServerSide(api);
 
-                List<AssetLocation> assetLocations = api.Assets.GetLocations("patches/compatibility/" + name + "/" + name, ModId);             
-                
-                bool matchedmod = assetLocations.Count > 0;
-
-                if (matchedmod)
-                {
-                    if (api.ModLoader.IsModEnabled(name))
-                    {
-                        api.World.Config.SetBool(name.UcFirst(), true);
-                    }
-                }
-            }
+            _serverToggleChannel = api.Network.RegisterChannel("awearableLight")
+                .RegisterMessageType<TogglePacket>()
+                .SetMessageHandler<TogglePacket>((player, packet) => ToggleWearableItem(player));
         }
 
-        private bool LightToggle()
+        private bool ToggleWearableItem(IPlayer player)
         {
-            if (sapi != null || capi != null) 
-            {
-                if (capi.World.Player != null)
-                {
-                    IPlayer player = sapi.World.PlayerByUid(capi.World.Player.PlayerUID);
+            if (player == null) return false;
 
-                    if (player != null)
-                    {
-                        ItemSlot ActiveHand = player.InventoryManager.ActiveHotbarSlot;
+            ItemSlot activeSlot = player.InventoryManager.ActiveHotbarSlot;
 
-                        if(ActiveHand.Empty) return false;
+            if (activeSlot.Empty || activeSlot.Itemstack.Collectible is not ItemAttachmentableLight lightItem) return false;
 
-                        if (ActiveHand.Itemstack.Collectible is ItemAttachmentableLight attachmentableLight)
-                        {
-                            attachmentableLight.OnUsedBy(ActiveHand, player.Entity);
-                           
-                        }
-                    }
-                }
-            }
+            lightItem.OnUsed(activeSlot, player.Entity);
+
+            _clientToggleChannel?.SendPacket(new TogglePacket { ItemStack = activeSlot.Itemstack.ToBytes() });
 
             return true;
         }
 
-        public void JsonConfig(ICoreAPI api, Config config)
+        private void JsonConfig(ICoreAPI api)
         {
-            api.World.Config.GetBool("Sound", config.Sound);
-            api.World.Config.SetBool("Item", config.Items);
-            api.World.Config.SetBool("Recipes", config.Recipes);
-            api.World.Config.SetBool("Tradable", config.Tradable);
+            if (Config == null) return;
 
+            api.World.Config.GetBool("EnableSound", Config.EnableSound);
+            api.World.Config.SetBool("EnableItem", Config.EnableItem);
+            api.World.Config.SetBool("EnableRecipe", Config.EnableRecipe);
+            api.World.Config.SetBool("EnableTrader", Config.EnableTrader);
         }
 
         public override void AssetsFinalize(ICoreAPI api)
         {
-         
             foreach (var item in api.World.Collectibles)
             {
-                if (item.Attributes != null)
+                if (item.Attributes?["Backpack"].Exists == true && !item.LightHsv.SequenceEqual(new byte[] { 0, 0, 0 }))
                 {
-                    if (item.Attributes["Backpack"].Exists)
-                    {
-                        item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBagsBehavior(item));
-                    }
+                    item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBagsBehavior(item));
                 }
             }
-    
+
             base.AssetsFinalize(api);
         }
 
         public override void Dispose()
         {
-            harmony.UnpatchAll(harmony.Id);
+            _harmony.UnpatchAll(_harmony.Id);
             base.Dispose();
         }
     }
-
-   
 }

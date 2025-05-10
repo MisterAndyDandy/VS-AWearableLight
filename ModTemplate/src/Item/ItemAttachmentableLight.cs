@@ -8,12 +8,17 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using AWearableLight.Config;
+using Vintagestory.API.Server;
+using ProtoBuf;
+using System.Net.Sockets;
 
 
 namespace AWearableLight
 {
     class ItemAttachmentableLight : ItemWearable
     {
+        
         public override string GetHeldTpUseAnimation(ItemSlot activeHotbarSlot, Entity byEntity)
         {
             return null;
@@ -24,9 +29,9 @@ namespace AWearableLight
             return null;
         }
 
-        public void OnUsedBy(ItemSlot itemSlot, EntityPlayer entityPlayer) {
-
-            if (AWearableLightCore.Config.Sound)
+        public void OnUsed(ItemSlot itemSlot, EntityPlayer entityPlayer)
+        {
+            if (AWearableLightCore.Config.EnableSound)
             {
                 JsonObject attSound = Attributes["sound"];
                 if (attSound.Exists)
@@ -35,7 +40,7 @@ namespace AWearableLight
                     {
                         AssetLocation soundLocation = new AssetLocation(attSound.ToString());
 
-                        if(soundLocation == null) return;
+                        if (soundLocation == null) return;
 
                         entityPlayer.World.PlaySoundAt(soundLocation, entityPlayer.Pos.X + 0.5, entityPlayer.Pos.Y + 0.75, entityPlayer.Pos.Z + 0.5, null, randomizePitch: false, volume: 16f);
                     };
@@ -45,7 +50,7 @@ namespace AWearableLight
                     api.Logger.Error($"Cannot find sound attribute for item: {Code.GetName().ToLower()}");
                 }
             }
-    
+
             ItemStack itemStack = itemSlot.Itemstack;
 
             if (itemStack == null) return;
@@ -56,8 +61,6 @@ namespace AWearableLight
             };
 
             entityPlayer.Player.InventoryManager.BroadcastHotbarSlot();
-
-            entityPlayer.OnReceivedClientPacket((Vintagestory.API.Server.IServerPlayer)entityPlayer.Player, 1000, itemStack.ToBytes());
 
             itemSlot.MarkDirty();
         }

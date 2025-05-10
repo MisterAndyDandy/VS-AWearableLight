@@ -1,24 +1,47 @@
 {
-  "version": 2,
-  "file": "awearablelight.json",
-  "patches": {
-    "boolean": {
-      "meleeweaponsframework:patches/recipes/grid/clothes/head.json": {
-        "0/enabled": "Item_patch"
-      },
-      "settings": [
+    "version": 3,
+    "file": "AwearableLight.json",
+    "patches": {
+    },
+    "settings": [
         {
-          "type": "separator",
-          "title": "General Setting"
+            "code": "EnableSound",
+            "ingui": "awearablelight:setting-sound",
+            "type": "boolean",
+            "weight": 0.89,
+            "comment": "On/Off sounds for items when being turn on and off.",
+            "default": true
         },
         {
-          "code": "Item_patch",
-          "ingui": "item_patch",
-          "type": "boolean",
-          "comment": "item-patch-desc",
-          "default": true
+            "code": "EnableItem",
+            "ingui": "awearablelight:setting-item",
+            "type": "boolean",
+            "weight": 0.89,
+            "comment": "(Set to false) to disable items from Awearable Light",
+            "default": true
+        },
+        {
+            "code": "EnableRecipe",
+            "ingui": "awearablelight:setting-recipe",
+            "type": "boolean",
+            "weight": 0.89,
+            "comment": "(Set to false) to disable recipes from Awearable Light",
+            "default": true
+        },
+        {
+            "code": "EnableTrader",
+            "ingui": "awearablelight:setting-trader",
+            "type": "boolean",
+            "weight": 0.89,
+            "comment": "(Set to false) to disable traderables from Awearable Light",
+            "default": true
         }
-      ]
-    }
-  }
+    ],
+    "formatting": [
+        {
+            "type": "separator",
+            "title": "Main",
+            "weight": 1.0
+        }
+    ]
 }

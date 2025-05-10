@@ -1,13 +1,13 @@
 [
-  {
-    "op": "add",
-    "path": "/enabled",
-    "value": false,
-    "file": "awearablelight:recipes/smithing/candle1/basepart.json",
-    "side": "Server",
-    "condition": {
-      "when": "Recipes",
-      "isValue": "false"
+    {
+        "op": "add",
+        "path": "/enabled",
+        "value": false,
+        "file": "awearablelight:recipes/smithing/candle1/basepart.json",
+        "side": "Server",
+        "condition": {
+            "when": "EnableRecipe",
+            "isValue": "false"
+        }
     }
-  }
 ]

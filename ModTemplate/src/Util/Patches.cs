@@ -20,38 +20,46 @@ namespace AWearableLight.Util
         static void Harmony_EntityPlayer_LightHsv_Postfix(EntityPlayer __instance, ref byte[] __result)
         {
             // Check for null instance, player not alive, or player in spectator mode
-            if (__instance == null || !__instance.Alive || __instance.Player == null || __instance.Player.WorldData.CurrentGameMode == EnumGameMode.Spectator)
-                return;
 
-            PlayerLightHsvData.LightHsvData(__instance, ref __result);
+            try
+            {
+                if (__instance == null || !__instance.Alive || __instance.Player == null || __instance.Player.WorldData.CurrentGameMode == EnumGameMode.Spectator)
+                    return;
+
+                PlayerLightHsvData.LightHsvData(__instance, ref __result);
+            }
+            catch 
+            {
+
+            }
         }
     }
 
     public class PlayerLightHsvData
     {
 
-        public static void LightHsvData(EntityPlayer player, ref byte[] lightHsv)
+        public static void LightHsvData(EntityPlayer entityPlayer, ref byte[] lightHsv)
         {
             // Your custom logic here to process the light HSV data or perform other actions
             // For example, adjust the light HSV values based on player conditions or settings
             // This method will be called after the getter has been invoked
             // Iterate through gear inventory slots
 
-            foreach (var slots in player.GearInventory)
+            foreach (var slots in entityPlayer.Player.InventoryManager.GetInventory(GlobalConstants.characterInvClassName + "-" +entityPlayer.PlayerUID))
             {
 
                 if (slots == null || slots.Empty) continue;
 
                 if (slots.Itemstack.Collectible?.LightHsv[0] == 0) continue;
 
-                AdjustLightLevelForItemSlot(slots, ref lightHsv);
+                AdjustLightLevelForItemSlot(slots, entityPlayer, ref lightHsv);
             }
 
             // Adjust light level for backpack slots
 
             for (int slotIndex = 0; slotIndex < 4; slotIndex++)
             {
-                IInventory backpack = player.Player.InventoryManager.GetInventory(GlobalConstants.backpackInvClassName + "-" + player.PlayerUID);
+                IInventory backpack = entityPlayer.Player.InventoryManager.GetInventory(GlobalConstants.backpackInvClassName + "-" + entityPlayer.PlayerUID);
 
                 if (backpack != null)
                 {
@@ -90,7 +98,7 @@ namespace AWearableLight.Util
                 };
             }
 
-            static void AdjustLightLevelForItemSlot(ItemSlot gearSlots, ref byte[] lightHsv)
+            static void AdjustLightLevelForItemSlot(ItemSlot gearSlots, EntityPlayer entityPlayer, ref byte[] lightHsv)
             {
                 if (gearSlots.Empty || gearSlots == null)
                     return;
@@ -102,7 +110,7 @@ namespace AWearableLight.Util
                     return;
 
                 byte[] gearHsv = gearSlots.Itemstack.Collectible.LightHsv;
-
+              
                 // Check if light is null
                 if (gearHsv == null)
                     return;
@@ -124,6 +132,8 @@ namespace AWearableLight.Util
                 (byte)(gearHsv[1] * number + lightHsv[1] * (1 - number)),
                 Math.Max(gearHsv[2], lightHsv[2])
                 };
+
+                
             }
         }
     }

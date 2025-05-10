@@ -1,5 +1,5 @@
 {
-	"code": "backpack",
+	"code": "awearablelight:backpack",
 	"maxstacksize": 1,
 	"behaviors": [
 		{
@@ -15,11 +15,15 @@
 					"z2": 0.75
 				}
 			}
-		}
+		},
+		{ "name": "HeldBag" }
 	],
 	"attributes": {
+		"attachableToEntity": {
+			"categoryCode": "backpack",
+			"attachedShape": { "base": "awearablelight:item/bag/backpack-attached-lantern" }
+		},
 		"wearableAttachment": true,
-		"attachShape": { "base": "awearablelight:item/bag/backpack-attached-lantern" },
 		"backpack": {
 			"quantitySlots": 6
 		}
@@ -36,7 +40,7 @@
 	"creativeinventory": {
 		"general": [ "*" ],
 		"items": [ "*" ],
-		"awearablelight": ["*"]
+		"awearablelight": [ "*" ]
 	},
 	"guiTransform": {
 		"translation": {
