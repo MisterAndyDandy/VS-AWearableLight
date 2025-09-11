@@ -118,12 +118,18 @@ namespace AWearableLight
         {
             foreach (var item in api.World.Collectibles)
             {
-                if (item.Attributes?["Backpack"].Exists == true && !item.LightHsv.SequenceEqual(new byte[] { 0, 0, 0 }))
+                if (item.Attributes?["Backpack"].Exists == true)
                 {
-                    item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBagsBehavior(item));
+                    // Use the new GetLightHsv method instead of the LightHsv field
+                    byte[] lightHsv = item.GetLightHsv(api.World.BlockAccessor, null, null);
+
+                    // Check if the item has light (not null, has correct length, and not all zeros)
+                    if (lightHsv != null && lightHsv.Length >= 3 && !lightHsv.SequenceEqual(new byte[] { 0, 0, 0 }))
+                    {
+                        item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBagsBehavior(item));
+                    }
                 }
             }
-
             base.AssetsFinalize(api);
         }
 

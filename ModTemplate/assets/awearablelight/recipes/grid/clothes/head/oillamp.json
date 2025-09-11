@@ -3,7 +3,7 @@
   "ingredients": {
     "B": {
       "type": "block",
-      "code": "game:oillamp-up",
+      "code": "game:oillamp-*",
       "quantity": 1
     },
     "P": {

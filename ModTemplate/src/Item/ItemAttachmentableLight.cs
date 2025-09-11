@@ -73,23 +73,33 @@ namespace AWearableLight
             // Ensure itemStack and Collectible are not null
             ItemStack itemStack = inSlot.Itemstack;
 
-            byte[] lightHsv = itemStack.Collectible.LightHsv;
+            // Use the GetLightHsv method instead of the LightHsv field
+            byte[] lightHsv = itemStack.Collectible.GetLightHsv(world.BlockAccessor, null, itemStack);
 
-            // If lightHsv is not available, use original values
-            if (lightHsv[0] == 0)
+            // If lightHsv is not available or null, try to get from original item
+            if (lightHsv == null || lightHsv[0] == 0)
             {
-                lightHsv = new ItemStack(world.GetItem(new AssetLocation(Code.Domain, GetAssetLocation))).Collectible.LightHsv;
+                var originalItem = world.GetItem(new AssetLocation(Code.Domain, GetAssetLocation));
+                if (originalItem != null)
+                {
+                    lightHsv = originalItem.GetLightHsv(world.BlockAccessor, null, new ItemStack(originalItem));
+                }
             }
 
-            // Constants for indices
-            const int ValueIndex = 2;
-
-            // Check light level and append to description
-            dsc.Append(lightHsv[ValueIndex] > 0 ? $"{Lang.Get("light-level")}{lightHsv[ValueIndex]}\n" : "");
+            // Check if we have valid light data
+            if (lightHsv != null && lightHsv.Length > 2)
+            {
+                // Constants for indices
+                const int ValueIndex = 2;
+                // Check light level and append to description
+                if (lightHsv[ValueIndex] > 0)
+                {
+                    dsc.Append($"{Lang.Get("light-level")}{lightHsv[ValueIndex]}\n");
+                }
+            }
 
             // Continue with the base method
             base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
-
             #endregion
         }
  
