@@ -93,11 +93,28 @@ namespace AWearableLight
         {
             if (player == null) return false;
 
+            // First check equipped gear slots (head, waist, etc.)
+            var characterInv = player.InventoryManager.GetInventory(GlobalConstants.characterInvClassName + "-" + player.Entity.PlayerUID);
+            if (characterInv != null)
+            {
+                foreach (var slot in characterInv)
+                {
+                    if (slot.Empty) continue;
+                    if (slot.Itemstack.Collectible is ItemAttachmentableLight lightItem)
+                    {
+                        lightItem.OnUsed(slot, player.Entity);
+                        _clientToggleChannel?.SendPacket(new TogglePacket { ItemStack = slot.Itemstack.ToBytes() });
+                        return true;
+                    }
+                }
+            }
+
+            // Fall back to active hotbar slot
             ItemSlot activeSlot = player.InventoryManager.ActiveHotbarSlot;
 
-            if (activeSlot.Empty || activeSlot.Itemstack.Collectible is not ItemAttachmentableLight lightItem) return false;
+            if (activeSlot.Empty || activeSlot.Itemstack.Collectible is not ItemAttachmentableLight hotbarLightItem) return false;
 
-            lightItem.OnUsed(activeSlot, player.Entity);
+            hotbarLightItem.OnUsed(activeSlot, player.Entity);
 
             _clientToggleChannel?.SendPacket(new TogglePacket { ItemStack = activeSlot.Itemstack.ToBytes() });
 
