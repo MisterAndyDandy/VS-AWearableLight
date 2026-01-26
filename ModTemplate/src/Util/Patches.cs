@@ -50,7 +50,8 @@ namespace AWearableLight.Util
 
                 if (slots == null || slots.Empty) continue;
 
-                if (slots.Itemstack.Collectible?.LightHsv[0] == 0) continue;
+                byte[] slotLightHsv = slots.Itemstack.Collectible?.GetLightHsv(entityPlayer.World.BlockAccessor, null, slots.Itemstack);
+                if (slotLightHsv == null || slotLightHsv[0] == 0) continue;
 
                 AdjustLightLevelForItemSlot(slots, entityPlayer, ref lightHsv);
             }
@@ -63,17 +64,17 @@ namespace AWearableLight.Util
 
                 if (backpack != null)
                 {
-                    AdjustLightLevelForBackPackSlot((ItemSlotBackpack)backpack[slotIndex], ref lightHsv);
+                    AdjustLightLevelForBackPackSlot((ItemSlotBackpack)backpack[slotIndex], entityPlayer, ref lightHsv);
                 }
             }
 
-            static void AdjustLightLevelForBackPackSlot(ItemSlotBackpack itemSlotBackpack, ref byte[] lightHsv)
+            static void AdjustLightLevelForBackPackSlot(ItemSlotBackpack itemSlotBackpack, EntityPlayer entityPlayer, ref byte[] lightHsv)
             {
                 // Check if slot is empty
                 if (itemSlotBackpack?.Empty ?? true)
                     return;
 
-                byte[] backpackHsv = itemSlotBackpack.Itemstack.Collectible.LightHsv;
+                byte[] backpackHsv = itemSlotBackpack.Itemstack.Collectible.GetLightHsv(entityPlayer.World.BlockAccessor, null, itemSlotBackpack.Itemstack);
 
                 // Check if clipOn is null
                 if (backpackHsv == null)
@@ -109,7 +110,7 @@ namespace AWearableLight.Util
                 if (itemStack == null)
                     return;
 
-                byte[] gearHsv = gearSlots.Itemstack.Collectible.LightHsv;
+                byte[] gearHsv = gearSlots.Itemstack.Collectible.GetLightHsv(entityPlayer.World.BlockAccessor, null, gearSlots.Itemstack);
               
                 // Check if light is null
                 if (gearHsv == null)
