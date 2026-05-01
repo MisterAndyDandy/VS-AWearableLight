@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>bin\$(Configuration)\Mods\mod</OutputPath>
   </PropertyGroup>
@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\awearablelight\config\" />
+    <Folder Include="assets\awearablelight\itemtypes\armors\" />
     <Folder Include="src\Entity\" />
+    <Folder Include="src\Item\" />
   </ItemGroup>
 </Project>

@@ -2,11 +2,10 @@
     "type": "code",
     "modid": "awearablelight",
     "name": "A Wearable Light",
-    "description": "This mod let's you an wearable light",
+    "description": "This mod lets you use a wearable light.",
     "authors": [ "Mister Andy Dandy" ],
     "Contributors": [ "Ruddi", "o0darkill0o", "Apache", "Craluminum" ],
-    "version": "1.1.31",
+    "version": "1.1.7",
     "dependencies": {
-        "game": "1.20.*"
     }
 }

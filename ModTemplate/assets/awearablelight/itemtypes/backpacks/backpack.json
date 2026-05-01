@@ -1,5 +1,6 @@
 {
 	"code": "awearablelight:backpack",
+	"enabled": false,
 	"maxstacksize": 1,
 	"behaviors": [
 		{

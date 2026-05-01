@@ -3,7 +3,6 @@
 		"type": "item",
 		"code": "game:ingot-brass"
 	},
-	name: "basepart1",
 	pattern: [
 		[
 			"____",
@@ -19,6 +18,8 @@
 			"####"
 		]
 	],
+	name: "basepart 1",
+	code: "basepart-bass",
 	output: {
 		"type": "item",
 		"code": "awearablelight:basepart-candle1"

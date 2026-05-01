@@ -10,11 +10,5 @@ namespace AWearableLight.Config
     public class ServerConfig
     {
         public bool EnableSound { get; set; } = true;
-
-        public bool EnableItem { get; set; } = true;
-
-        public bool EnableRecipe { get; set; } = true;
-
-        public bool EnableTrader { get; set; } = true;   
     }
 }

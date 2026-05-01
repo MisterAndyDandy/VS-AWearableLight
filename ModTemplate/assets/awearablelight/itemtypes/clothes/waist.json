@@ -1,6 +1,5 @@
 {
 	"code": "clothes",
-	"class": "AttachmentableLight",
 	"variantgroups": [
 		{
 			"code": "category",
@@ -8,8 +7,6 @@
 		},
 		{
 			"code": "waist",
-			"combine": "SelectiveMultiply",
-			"onVariant": "category",
 			"states": [
 				"heavy-belt-brass-lantern-off",
 				"heavy-belt-brass-lantern-on"
@@ -18,14 +15,21 @@
 	],
 	"shape": { "base": "awearablelight:entity/humanoid/seraph/clothing/waist/{waist}" },
 	"storageFlags": 128,
+	behaviors: [
+		{ "name": "Wearable" },
+		{ "name": "awearablelight:Fuel" },
+        { "name": "awearablelight:AttachmentableLight" }
+    ],
 	"attributesByType": {
 		"*-heavy-belt-brass-lantern-off": {
+			"fuelType": "game:candle",
 			"sound": null, // Not being used yet
 			"wearableAttachment": true,
 			"clothescategory": "waist",
 			"warmth": 0.5
 		},
 		"*-heavy-belt-brass-lantern-on": {
+			"fuelType": "game:candle",
 			"sound": "game:sounds/effect/extinguish",
 			"wearableAttachment": true,
 			"clothescategory": "waist",

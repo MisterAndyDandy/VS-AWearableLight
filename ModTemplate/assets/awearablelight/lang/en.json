@@ -17,12 +17,17 @@
 
 	"item-backpack": "Backpack (Brass Lantern)",
 
-
-	"game:heldhelp-toggle": "Toggle light",
-	"game:heldhelp-bags-rightclick": "Equip",
+	"awearablelight:heldhelp-toggle-activeslot": "Toggle light (Hotbar slot)",
+	"awearablelight:heldhelp-toggle-gearslot": "Toggle light (Gear slot)",
+	"awearablelight:heldhelp-fueltypes": "Use for fuel",
 	"game:tabname-awearablelight": "A Wearable Light",
 
-	"awearablelight:keybind-description": "Toggle light",
+	"awearablelight:keybind-activeslot-description": "Toggle light (Hotbar slot)",
+	"awearablelight:keybind-gearslot-description": "Toggle light (Gear slot)",
+
+	"awearablelight:fuel-hours": "Fuel: {0}/{1} hours",
+	"awearablelight:ingameerror-light-full": "{0} is full",
+	"awearablelight:ingameerror-light-nofuel": "{0} has no fuel",
 
 	"setting-sound": "Sound",
 	"setting-item": "Item",

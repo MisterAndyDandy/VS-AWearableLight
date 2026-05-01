@@ -15,11 +15,7 @@
                 "var": 1
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     },
     {
         "op": "add",
@@ -37,11 +33,7 @@
                 "var": 0.75
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     },
     {
         "op": "add",
@@ -59,11 +51,7 @@
                 "var": 0.75
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     },
     {
         "op": "add",
@@ -81,11 +69,7 @@
                 "var": 0.75
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     },
     {
         "op": "add",
@@ -103,11 +87,7 @@
                 "var": 0.25
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     },
     {
         "op": "add",
@@ -125,11 +105,7 @@
                 "var": 1
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     },
     {
         "op": "add",
@@ -147,11 +123,7 @@
                 "var": 0.75
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     },
     {
         "op": "add",
@@ -170,11 +142,7 @@
             }
         },
         "file": "game:config/tradelists/trader-clothing.json",
-        "side": "Server",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "side": "Server"
     },
     {
         "op": "add",
@@ -192,11 +160,7 @@
                 "var": 0.75
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     },
     {
         "op": "add",
@@ -214,10 +178,6 @@
                 "var": 0.25
             }
         },
-        "file": "game:config/tradelists/trader-clothing.json",
-        "condition": {
-            "when": "EnableTrader",
-            "isValue": "true"
-        }
+        "file": "game:config/tradelists/trader-clothing.json"
     }
 ]
