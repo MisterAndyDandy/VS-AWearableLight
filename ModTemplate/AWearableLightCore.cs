@@ -1,6 +1,8 @@
 ﻿using AWearableLight.Config;
+using AWearableLight.Interfaces;
+using AWearableLight.Network;
+using AWearableLight.Util;
 using ProtoBuf;
-using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -20,59 +22,59 @@ namespace AWearableLight
 
     public class AWearableLightCore : ModSystem
     {
-        private static readonly string ConfigName = "AwearableLight.json";
+        private static readonly string ConfigServerName = "awearablelight-server.json";
 
-        public static ServerConfig? Config;
+        private static readonly string ConfigClientName = "awearablelight-client.json";
+
+        public static Server? ServerConfig;
+
+        public static Client? ClientConfig;
 
         private double lastServerTotalHours;
+
         private long OnLongServerTick { get; set; } = 0;
 
         private ICoreServerAPI? Sapi { get; set; }
 
-        private IClientNetworkChannel? _clientToggleChannel;
-        private IServerNetworkChannel? _serverToggleChannel;
 
-        public override void StartPre(ICoreAPI api)
-        {
-            base.StartPre(api);
+        private IClientNetworkChannel? clientToggleChannel;
 
-            LoadOrCreateConfig(api);
-            JsonConfig(api);
-        }
+        private IServerNetworkChannel? serverToggleChannel;
 
-        private void LoadOrCreateConfig(ICoreAPI api)
-        {
-            var logger = api.Logger;
-
-            try
-            {
-                Config = api.LoadModConfig<ServerConfig>(ConfigName) ?? new ServerConfig();
-                api.StoreModConfig(Config, ConfigName);
-                logger?.VerboseDebug($"Config file '{ConfigName}' loaded or created successfully.");
-            }
-            catch (Exception e)
-            {
-                logger?.Error($"Failed to load config file '{ConfigName}'. Error: {e.Message}");
-                Config = new ServerConfig();
-                api.StoreModConfig(Config, ConfigName);
-                logger?.Error("A new config file with default values has been created.");
-            }
-        }
+        private ConfigSyncSystem? configSync;
 
         public override void Start(ICoreAPI api)
         {
             base.Start(api);
 
+            if (api.Side == EnumAppSide.Server)
+            {
+                ServerConfig = new LoadOrCreate().SapiConfig(api, ConfigServerName);
+                WearableLightConfigHelper.Init(ServerConfig);
+            }
+
+            // ❌ remove client config loading
+
+            configSync = new ConfigSyncSystem(
+                api,
+                api.Side == EnumAppSide.Server ? ServerConfig : null
+            );
+
             api.RegisterCollectibleBehaviorClass("awearablelight:AttachmentableLight", typeof(CollectibleBehaviorAttachmentableLight));
             api.RegisterCollectibleBehaviorClass("awearablelight:Fuel", typeof(CollectibleBehaviorFuel));
+            api.RegisterCollectibleBehaviorClass("awearablelight:WindUp", typeof(CollectibleBehaviorWindup));
         }
 
         public override void StartClientSide(ICoreClientAPI api)
         {
             base.StartClientSide(api);
 
-            _clientToggleChannel = api.Network.RegisterChannel("awearableLight")
-                .RegisterMessageType<TogglePacket>();
+            ClientConfig = new LoadOrCreate().CapiConfig(api, ConfigClientName);
+
+            clientToggleChannel = api.Network
+            .RegisterChannel("awearablelighttoggle")
+            .RegisterMessageType<TogglePacket>();
+
 
             api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-activeslot-description"), GlKeys.L);
             api.Input.SetHotKeyHandler("toggleLight", _ => OnToggleLightHotkey(api.World.Player));
@@ -80,6 +82,7 @@ namespace AWearableLight
             api.Input.RegisterHotKey("toggleHoveredGearLight", Lang.Get("awearablelight:keybind-gearslot-description"), GlKeys.L, HotkeyType.CharacterControls, false, true, false);
             api.Input.SetHotKeyHandler("toggleHoveredGearLight", _ => OnToggleHoveredGearLightHotkey(api.World.Player));
 
+            JsonConfig(api);
         }
 
         public override void StartServerSide(ICoreServerAPI api)
@@ -88,12 +91,29 @@ namespace AWearableLight
 
             Sapi = api;
 
-            _serverToggleChannel = api.Network.RegisterChannel("awearableLight")
+            serverToggleChannel = api.Network
+            .RegisterChannel("awearablelighttoggle")
             .RegisterMessageType<TogglePacket>()
             .SetMessageHandler<TogglePacket>(ToggleWearableItem);
 
+            api.Event.PlayerNowPlaying += (player) =>
+            {
+                configSync?.SendToPlayer(player);
+            };
 
             OnLongServerTick = api.Event.RegisterGameTickListener(OnServerTick, 1000, 200);
+        }
+
+        public static void MigrateConfig(ICoreAPI api)
+        {
+            if (ServerConfig == null) return;
+
+            // Example: ensure FuelTypes exists
+            ServerConfig.FuelTypes ??= new();
+
+            api.StoreModConfig(ServerConfig, ConfigServerName);
+
+            api.Logger.Notification($"[WearableLight] Config migrated to version {ServerConfig.Version}.");
 
         }
 
@@ -102,6 +122,10 @@ namespace AWearableLight
             base.Dispose();
 
             Sapi?.Event.UnregisterGameTickListener(OnLongServerTick);
+
+            configSync = null;
+            ServerConfig = null;
+            ClientConfig = null;
         }
 
         private void OnServerTick(float dt)
@@ -134,38 +158,38 @@ namespace AWearableLight
 
                     ItemStack stack = slot.Itemstack;
 
-                    IFuelType item = stack.Collectible.GetCollectibleInterface<IFuelType>();
+                    IPowerSource powerType = stack.Collectible.GetCollectibleInterface<IPowerSource>();
 
-                    if(item == null) continue;
+                    if(powerType == null) continue;
 
                     // Only look for items that use fuel.
-                    if (!item.UseFuel(stack)) continue;
+                    if (!WearableLightConfigHelper.NeedFuel(stack.Collectible.Code)) continue;
 
                     // Only active lights drain
                     if (!stack.Attributes.GetAsBool("togglelight")) continue;
 
                     // Optional future fuel behavior
 
-                    double fuel = item.GetFuel(stack);
+                    double fuel = powerType.GetPower(stack);
 
                     var light = stack.Collectible.GetCollectibleBehavior<CollectibleBehaviorAttachmentableLight>(true);
 
                     // Auto shutoff
                     if (fuel <= 0)
                     {
-                        item.SetFuel(stack, 0);
+                        powerType.SetPower(stack, 0);
                         light.SetLightActive(slot, false, player.Entity);
                         slot.MarkDirty();
                         continue;
                     }
 
                     // Drain fuel
-                    item.ConsumeFuel(stack, elapsedHours);
+                    powerType.ConsumePower(stack, elapsedHours);
 
                     // Clamp after drain
-                    if (item.GetFuel(stack) <= 0)
+                    if (powerType.GetPower(stack) <= 0)
                     {
-                        item.SetFuel(stack, 0);
+                        powerType.SetPower(stack, 0);
                         light.SetLightActive(slot, false, player.Entity);
                     }
 
@@ -211,7 +235,7 @@ namespace AWearableLight
             );
 
             // Sync to server
-            _clientToggleChannel?.SendPacket(new TogglePacket
+            clientToggleChannel?.SendPacket(new TogglePacket
             {
                 ItemSlot = itemslot
             });
@@ -242,9 +266,9 @@ namespace AWearableLight
 
         private void JsonConfig(ICoreAPI api)
         {
-            if (Config == null) return;
+            if (ClientConfig == null) return;
 
-            api.World.Config.GetBool("EnableSound", Config.EnableSound);
+            api.World.Config.GetBool("EnableSound", ClientConfig.EnableSounds);
         }
     }
 }

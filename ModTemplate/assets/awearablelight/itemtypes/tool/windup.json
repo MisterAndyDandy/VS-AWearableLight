@@ -1,0 +1,29 @@
+{
+	code: "windup",
+	attributes: {
+		"isBattery": true
+	},
+	behaviors: [
+		{ "name": "awearablelight:WindUp" }
+    ],
+	shape: { base: "block/basic/cube" },
+	creativeinventory: { "general": ["*"], "items": ["*"], "tools": ["*"] },
+	guiTransform: {
+		translation: { x: 0, y: 0, z: 0 },
+		rotation: { x: 148, y: -40, z: 0 },
+		origin: { x: 0.53, y: 0.23, z: 0.49 },
+		scale: 3
+	},
+	groundTransform: {
+		translation: { x: 0, y: 0, z: 0 },
+		rotation: { x: 0, y: 0, z: 0 },
+		origin: { x: 0.5, y: 0, z: 0.5 },
+		scale: 4.5
+	},
+	tpHandTransform: {
+		translation: { x: -0.91, y: -0.18, z: -0.73 },
+		rotation: { x: -3, y: 1, z: -22 },
+		origin: { x: 0.5, y: 0.2, z: 0.5 },
+		scale: 0.7
+	}
+}

@@ -22,14 +22,12 @@
     ],
 	"attributesByType": {
 		"*-heavy-belt-brass-lantern-off": {
-			"fuelType": "game:candle",
 			"sound": null, // Not being used yet
 			"wearableAttachment": true,
 			"clothescategory": "waist",
 			"warmth": 0.5
 		},
 		"*-heavy-belt-brass-lantern-on": {
-			"fuelType": "game:candle",
 			"sound": "game:sounds/effect/extinguish",
 			"wearableAttachment": true,
 			"clothescategory": "waist",

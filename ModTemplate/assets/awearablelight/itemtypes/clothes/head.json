@@ -32,7 +32,6 @@
     ],
 	"attributesByType": {
 		"@.*-(oil-lamp-on)": {
-			"fuelType": "game:fat",
 			"sound": "game:sounds/effect/extinguish", // when the light turn off.
 			"wearableAttachment": true,
 			"clothescategory": "head",
@@ -40,14 +39,12 @@
 			"warmth-bouse": 0.25
 		},
 		"@.*-(oil-lamp-off)": {
-			"fuelType": "game:fat",
 			"sound": null, // Not being used yet
 			"wearableAttachment": true,
 			"clothescategory": "head",
 			"warmth": 0.1 // Base Value
 		},
 		"@.*-(torch-on)": {
-			"useFuel": false,
 			"sound": null, // when the light turn off.
 			"wearableAttachment": true,
 			"clothescategory": "head",
@@ -55,14 +52,12 @@
 			"warmth-bouse": 0.35
 		},
 		"@.*-(torch-off)": {
-			"useFuel": false,
 			"sound": "game:sounds/effect/extinguish", // when the light turn off.
 			"wearableAttachment": true,
 			"clothescategory": "head",
 			"warmth": 0.1 // Base Value
 		},
 		"@.*-(candle1-on|candle2-on)": {
-			"fuelType": "game:fat",
 			"sound": "game:sounds/effect/extinguish", // when the light turn off.
 			"wearableAttachment": true,
 			"clothescategory": "head",
@@ -70,7 +65,6 @@
 			"warmth-bouse": 0.25
 		},
 		"@.*-(candle1-off|candle2-off)": {
-			"fuelType": "game:candle",
 			"sound": null, // Not being used yet
 			"wearableAttachment": true,
 			"clothescategory": "head",

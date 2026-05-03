@@ -1,4 +1,7 @@
 ﻿using AWearableLight.Config;
+using AWearableLight.Interfaces;
+using AWearableLight.Util;
+using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -15,9 +18,7 @@ namespace AWearableLight
     {
         private JsonObject? attSound;
 
-        private ServerConfig? serverConfig;
-
-        private IFuelType? fuelType => collObj.GetCollectibleInterface<IFuelType>();
+        private IPowerSource? powerType => collObj.GetCollectibleInterface<IPowerSource>();
 
         private ICoreAPI? api {  get;  set; }
 
@@ -29,8 +30,6 @@ namespace AWearableLight
         public override void OnLoaded(ICoreAPI api)
         {
             this.api = api;
-
-            serverConfig = api.LoadModConfig<ServerConfig>("AwearableLight.json");
 
             attSound = collObj.Attributes["sound"];
 
@@ -48,10 +47,10 @@ namespace AWearableLight
 
             ItemStack stack = slot.Itemstack;
 
-            bool hasFuel = fuelType?.HasFuel(stack) ?? false;
+            bool hasFuel = powerType?.HasPower(stack) ?? false;
 
             // Only block activation if no fuel
-            if (active && fuelType != null && !hasFuel && fuelType.UseFuel(stack))
+            if (active && powerType != null && !hasFuel && WearableLightConfigHelper.NeedFuel(stack.Collectible.Code))
             {
                 if (api?.Side == EnumAppSide.Client)
                 {
@@ -72,7 +71,7 @@ namespace AWearableLight
             if (LightState(stack) == active) return;
 
             // Play toggle sound
-            if (serverConfig?.EnableSound == true && player != null)
+            if (api.World.Config.GetAsBool("EnableSound", false) && player != null)
             {
                 string soundPath = attSound?.AsString() ?? string.Empty;
 

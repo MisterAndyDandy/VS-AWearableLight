@@ -1,250 +1,281 @@
-﻿using System.Collections.Generic;
+﻿using AWearableLight.Config;
+using AWearableLight.Interfaces;
+using AWearableLight.Util;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
-public interface IFuelType
+namespace AWearableLight
 {
-    float FuelCapacity { get; }
-
-    bool HasFuel(ItemStack sourceStack);
-
-    bool IsFull(ItemStack sourceStack);
-
-    void AddFuel(ItemStack sourceStack, ItemStack sinkStack, double amount);
-
-    void ConsumeFuel(ItemStack sorceStack, double amount);
-
-    void SetFuel(ItemStack sourceStack, double amount);
-
-    double GetFuel(ItemStack sourceStack);
-
-    bool UseFuel(ItemStack sourceStack);
-}
-
-public class CollectibleBehaviorFuel : CollectibleBehavior, IFuelType
-{
-
-    #nullable enable
-    private ICoreAPI? Api {  get; set; }
-
-    public float FuelCapacity => collObj.Attributes?["fuelCapacity"].AsFloat(24f) ?? 24f;
-
-    public CollectibleBehaviorFuel(CollectibleObject collObj) : base(collObj) { }
-
-    public override void OnLoaded(ICoreAPI api)
+    public class CollectibleBehaviorFuel : CollectibleBehavior, IPowerSource
     {
-        Api = api;
 
-        base.OnLoaded(api);
-    }
+        #nullable enable
+        private ICoreAPI? Api { get; set; }
 
-    public override void OnCreatedByCrafting(ItemSlot[] allInputSlots, ItemSlot outputSlot, IRecipeBase byRecipe, ref EnumHandling bhHandling )
-    {
-        if(outputSlot?.Itemstack != null)
+        public float FuelCapacity = 24f;
+
+        public CollectibleBehaviorFuel(CollectibleObject collObj) : base(collObj) { }
+
+        public override void OnLoaded(ICoreAPI api)
         {
-            SetFuel(outputSlot.Itemstack, 8);
+            Api = api;
+
+            FuelProps fuelProps = WearableLightConfigHelper.GetProps(collObj.Code);
+
+            FuelCapacity = fuelProps.Capacity > 0 ? fuelProps.Capacity : FuelCapacity;
+
+            base.OnLoaded(api);
         }
 
-        base.OnCreatedByCrafting(allInputSlots, outputSlot, byRecipe, ref bhHandling);
-    }
-
-    public override int GetMergableQuantity( ItemStack sinkStack, ItemStack sourceStack, EnumMergePriority priority, ref EnumHandling handling)
-    {
-        if (priority == EnumMergePriority.DirectMerge)
+        public override void OnCreatedByCrafting(ItemSlot[] allInputSlots, ItemSlot outputSlot, IRecipeBase byRecipe, ref EnumHandling bhHandling)
         {
-            if (!UseFuel(sinkStack))
+            if (outputSlot?.Itemstack != null)
             {
-                return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
+                SetPower(outputSlot.Itemstack, 8);
             }
 
-            float fuel = GetStackFuel(sourceStack, sinkStack);
+            base.OnCreatedByCrafting(allInputSlots, outputSlot, byRecipe, ref bhHandling);
+        }
 
-            if (fuel <= 0f)
+        public override int GetMergableQuantity(ItemStack sinkStack, ItemStack sourceStack, EnumMergePriority priority, ref EnumHandling handling)
+        {
+            if (priority == EnumMergePriority.DirectMerge)
             {
-                return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
+                if (!WearableLightConfigHelper.NeedFuel(sinkStack.Collectible.Code))
+                {
+                    return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
+                }
+
+                float fuel = GetStackFuel(sourceStack, sinkStack);
+
+                if (fuel <= 0f)
+                {
+                    return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
+                }
+
+                double fuelHours = GetPower(sinkStack);
+
+                handling = EnumHandling.PreventDefault;
+
+                if (fuelHours >= FuelCapacity)
+                {
+                    return 0;
+                }
+
+                return 1;
             }
 
-            double fuelHours = GetFuel(sinkStack);
+            return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
+        }
 
-            handling = EnumHandling.PreventDefault;
+        public override void TryMergeStacks(ItemStackMergeOperation op, ref EnumHandling handling)
+        {
+            if (op.CurrentPriority != EnumMergePriority.DirectMerge)
+            {
+                handling = EnumHandling.PassThrough;
+                return;
+            }
+
+            if (op.SourceSlot.Empty || op.SinkSlot.Empty)
+            {
+                handling = EnumHandling.PassThrough;
+                return;
+            }
+
+            ItemStack sourceStack = op.SourceSlot.Itemstack;
+            ItemStack sinkStack = op.SinkSlot.Itemstack;
+
+            if (sourceStack == null || sinkStack == null)
+            {
+                handling = EnumHandling.PassThrough;
+                return;
+            }
+
+            if (!WearableLightConfigHelper.NeedFuel(sinkStack.Collectible.Code))
+            {
+                handling = EnumHandling.PassThrough;
+                return;
+            }
+
+            float stackFuel = GetStackFuel(sourceStack, sinkStack);
+
+            if (stackFuel <= 0f)
+            {
+                handling = EnumHandling.PassThrough;
+                return;
+            }
+
+            double fuelHours = GetPower(sinkStack);
 
             if (fuelHours >= FuelCapacity)
             {
-                return 0;
+                if (Api?.Side == EnumAppSide.Client)
+                {
+                    (Api as ICoreClientAPI)?.TriggerIngameError(
+                        this,
+                        "lightfull",
+                        Lang.Get(
+                            "awearablelight:ingameerror-light-full",
+                            sinkStack.Collectible.GetHeldItemName(sinkStack)
+                        )
+                    );
+                }
+
+                handling = EnumHandling.PreventDefault;
+                return;
             }
 
-            return 1;
-        }
+            AddPower(sourceStack, sinkStack, stackFuel);
 
-        return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
-    }
-
-    public override void TryMergeStacks(ItemStackMergeOperation op, ref EnumHandling handling)
-    {
-        if (op.CurrentPriority != EnumMergePriority.DirectMerge)
-        {
-            handling = EnumHandling.PassThrough;
-            return;
-        }
-
-        if (op.SourceSlot.Empty || op.SinkSlot.Empty)
-        {
-            handling = EnumHandling.PassThrough;
-            return;
-        }
-
-        ItemStack sourceStack = op.SourceSlot.Itemstack;
-        ItemStack sinkStack = op.SinkSlot.Itemstack;
-
-        if (sourceStack == null || sinkStack == null)
-        {
-            handling = EnumHandling.PassThrough;
-            return;
-        }
-
-        if (!UseFuel(sinkStack))
-        {
-            handling = EnumHandling.PassThrough;
-            return;
-        }
-
-        float stackFuel = GetStackFuel(sourceStack, sinkStack);
-
-        if (stackFuel <= 0f)
-        {
-            handling = EnumHandling.PassThrough;
-            return;
-        }
-
-        double fuelHours = GetFuel(sinkStack);
-
-        if (fuelHours >= FuelCapacity)
-        {
-            if (Api?.Side == EnumAppSide.Client)
-            {
-                (Api as ICoreClientAPI)?.TriggerIngameError(
-                    this,
-                    "lightfull",
-                    Lang.Get(
-                        "awearablelight:ingameerror-light-full",
-                        sinkStack.Collectible.GetHeldItemName(sinkStack)
-                    )
-                );
-            }
+            op.MovedQuantity = 1;
+            op.SourceSlot.TakeOut(1);
+            op.SinkSlot.MarkDirty();
 
             handling = EnumHandling.PreventDefault;
-            return;
         }
 
-        AddFuel(sourceStack, sinkStack, stackFuel);
-
-        op.MovedQuantity = 1;
-        op.SourceSlot.TakeOut(1);
-        op.SinkSlot.MarkDirty();
-
-        handling = EnumHandling.PreventDefault;
-    }
-
-    public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
-    {
-        if (inSlot == null || inSlot.Empty) return;
-
-        ItemStack itemStack = inSlot.Itemstack;
-
-        base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
-
-        if (!UseFuel(itemStack)) 
+        public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
         {
-            return;
-        }
+            if (inSlot == null || inSlot.Empty) return;
 
-        var fuel = GetFuel(itemStack).ToString("0.0");
-        var capfuel = FuelCapacity.ToString("0.0");
+            ItemStack itemStack = inSlot.Itemstack;
 
-        dsc.AppendLine();
-        dsc.AppendLine(Lang.Get("awearablelight:fuel-hours", fuel, capfuel));
+            base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
 
-    }
-
-    public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)
-    {
-        if (!inSlot.Empty && !UseFuel(inSlot.Itemstack)) return base.GetHeldInteractionHelp(inSlot, ref handling);
-
-        List<ItemStack> fuelStacks = new List<ItemStack>();
-
-        // Example fuel lookup from attributes
-        string fuelTypes = collObj.Attributes?["fuelType"].AsString() ?? string.Empty;
-
-        CollectibleObject? fuelItem = Api?.World.GetItem(new AssetLocation(fuelTypes));
-
-        if (fuelItem != null)
-        {
-            fuelStacks.Add(new ItemStack(fuelItem));
-        }
-
-        return new WorldInteraction[]
-        {
-            new WorldInteraction
+            if (!WearableLightConfigHelper.NeedFuel(itemStack.Collectible.Code))
             {
-                ActionLangCode = Lang.GetMatching("awearablelight:heldhelp-fueltypes"),
-                MouseButton = EnumMouseButton.None,
-                Itemstacks = fuelStacks.ToArray()
+                return;
             }
+
+            var fuel = GetPower(itemStack).ToString("0.0");
+            var capfuel = FuelCapacity.ToString("0.0");
+
+            dsc.AppendLine();
+            dsc.AppendLine(Lang.Get("awearablelight:fuel-hours", fuel, capfuel));
+
         }
-        .Append(base.GetHeldInteractionHelp(inSlot, ref handling));
-    }
 
-    public float GetStackFuel(ItemStack sourceStack, ItemStack sinkStack)
-    {
-        bool matched = WildcardUtil.Match(new AssetLocation(sourceStack.Collectible.Attributes?["fuelType"]?.AsString() ?? string.Empty), sinkStack.Collectible.Code);
+        public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)
+        {
+            if (inSlot.Empty) return base.GetHeldInteractionHelp(inSlot, ref handling);
 
-        if (matched) return 0f;
+            var props = WearableLightConfigHelper.GetProps(inSlot.Itemstack.Collectible.Code);
 
-        return sourceStack.Collectible.Attributes?["stackFuelHours"]?.AsFloat() ?? 0f;
-    }
+            if (!props.UseFuel || props.FuelList == null || props.FuelList.Count == 0)
+            {
+                return base.GetHeldInteractionHelp(inSlot, ref handling);
+            }
 
-    public virtual double GetFuel(ItemStack sourceStack)
-    {
-        return sourceStack.Attributes.GetDouble("fuelHours", 0);
-    }
+            List<ItemStack> fuelStacks = new();
 
-    public virtual void SetFuel(ItemStack sourceStack, double amount)
-    {
-        sourceStack.Attributes.SetDouble("fuelHours", GameMath.Clamp(amount, 0, FuelCapacity));
-    }
+            foreach (var fuel in props.FuelList.Keys)
+            {
+                if (string.IsNullOrEmpty(fuel)) continue;
 
-    public virtual void ConsumeFuel(ItemStack sourceStack, double amount)
-    {
-        if (amount <= 0) return;
+                var asset = new AssetLocation(fuel);
 
-        double fuel = GetFuel(sourceStack) - amount;
-        SetFuel(sourceStack, fuel);
-    }
+                // Exact match item
+                var item = Api?.World.GetItem(asset);
 
-    public virtual void AddFuel(ItemStack sourceStack, ItemStack sinkStack, double amount)
-    {
-        if (sourceStack == null) return;
+                if (item != null)
+                {
+                    fuelStacks.Add(new ItemStack(item));
+                    continue;
+                }
 
-        SetFuel(sinkStack, GetFuel(sinkStack) + amount);
-    }
+                // Wildcard match
+                var matches = Api?.World.SearchItems(asset);
 
-    public virtual bool HasFuel(ItemStack sourceStack)
-    {
-        return GetFuel(sourceStack) > 0;
-    }
+                if (matches != null)
+                {
+                    foreach (var match in matches)
+                    {
+                        fuelStacks.Add(new ItemStack(match));
+                    }
+                }
+            }
 
-    public virtual bool UseFuel(ItemStack sourceStack) 
-    {
-        return sourceStack.Collectible.Attributes?["useFuel"]?.AsBool(true) ?? true;
-    }
+            if (fuelStacks.Count == 0)
+            {
+                return base.GetHeldInteractionHelp(inSlot, ref handling);
+            }
 
-    public virtual bool IsFull(ItemStack sourceStack)
-    {
-        return GetFuel(sourceStack) >= FuelCapacity;
+            return new WorldInteraction[]
+            {
+                new WorldInteraction
+                {
+                    ActionLangCode = "awearablelight:heldhelp-fueltypes",
+                    MouseButton = EnumMouseButton.None,
+                    Itemstacks = fuelStacks.ToArray()
+                }
+            }
+            .Append(base.GetHeldInteractionHelp(inSlot, ref handling));
+        }
+
+        public virtual float GetStackFuel(ItemStack sourceStack, ItemStack sinkStack)
+        {
+            if (sourceStack == null || sinkStack == null) return 0f;
+
+            var props = WearableLightConfigHelper.GetProps(sinkStack.Collectible.Code);
+
+            if (!props.UseFuel) return 0f;
+
+            if (props.FuelList == null || props.FuelList.Count == 0) return 0f;
+
+            AssetLocation sourceCode = sourceStack.Collectible.Code;
+
+            foreach (var (code, value) in props.FuelList)
+            {
+                if (WildcardUtil.Match(new(code), sourceCode))
+                {
+                    return value;
+                }
+            }
+
+            return 0f;
+        }
+
+        public virtual double GetPower(ItemStack sourceStack)
+        {
+            return sourceStack.Attributes.GetDouble("fuelHours", 0);
+        }
+
+        public virtual void SetPower(ItemStack sourceStack, double amount)
+        {
+            sourceStack.Attributes.SetDouble("fuelHours", GameMath.Clamp(amount, 0, FuelCapacity));
+        }
+
+        public virtual void ConsumePower(ItemStack sourceStack, double amount)
+        {
+            if (amount <= 0) return;
+
+            double fuel = GetPower(sourceStack) - amount;
+            SetPower(sourceStack, fuel);
+        }
+
+        public virtual void AddPower(ItemStack sourceStack, ItemStack sinkStack, double amount)
+        {
+            if (sourceStack == null) return;
+
+            SetPower(sinkStack, GetPower(sinkStack) + amount);
+        }
+
+        public virtual bool HasPower(ItemStack sourceStack)
+        {
+            return GetPower(sourceStack) > 0;
+        }
+
+        public virtual bool IsFull(ItemStack sourceStack)
+        {
+            return GetPower(sourceStack) >= FuelCapacity;
+        }
     }
 }
