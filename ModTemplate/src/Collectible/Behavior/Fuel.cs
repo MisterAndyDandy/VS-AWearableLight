@@ -28,9 +28,9 @@ namespace AWearableLight
         {
             Api = api;
 
-            FuelProps fuelProps = WearableLightConfigHelper.GetProps(collObj.Code);
+            LightProps lightProps = WearableLightConfigHelper.GetProps(collObj.Code);
 
-            FuelCapacity = fuelProps.Capacity > 0 ? fuelProps.Capacity : FuelCapacity;
+            FuelCapacity = lightProps.Capacity > 0 ? lightProps.Capacity : FuelCapacity;
 
             base.OnLoaded(api);
         }

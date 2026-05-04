@@ -1,10 +1,15 @@
 ﻿using AWearableLight.Config;
 using AWearableLight.Util;
 using ProtoBuf;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace AWearableLight.Network
 {
@@ -14,11 +19,11 @@ namespace AWearableLight.Network
     public class ServerConfigPacket
     {
         [ProtoMember(1)]
-        public List<FuelTypePacket> FuelTypes = new();
+        public List<ItemTypePacket> ItemTypes = new();
     }
 
     [ProtoContract]
-    public class FuelTypePacket
+    public class ItemTypePacket
     {
         [ProtoMember(1)]
         public string Code = string.Empty;
@@ -41,6 +46,11 @@ namespace AWearableLight.Network
         private IServerNetworkChannel? serverChannel;
         private IClientNetworkChannel? clientChannel;
 
+        private string ConfigServerName = "awearablelight-server.json";
+
+        private DateTime lastConfigWriteTime;
+        private readonly string configPath;
+
         private Server? Config;
         private ICoreAPI api;
 
@@ -48,6 +58,13 @@ namespace AWearableLight.Network
         {
             this.api = api;
             this.Config = config;
+
+            configPath = Path.Combine(api.GetOrCreateDataPath("ModConfig"), ConfigServerName);
+
+            if (File.Exists(configPath))
+            {
+                lastConfigWriteTime = File.GetLastWriteTimeUtc(configPath);
+            }
 
             if (api.Side == EnumAppSide.Server)
             {
@@ -61,8 +78,50 @@ namespace AWearableLight.Network
                 clientChannel = (api as ICoreClientAPI)?.Network
                     .RegisterChannel("awearablelight_config")
                     .RegisterMessageType<ServerConfigPacket>()
-                    .SetMessageHandler<ServerConfigPacket>(OnConfigReceived);
+                    .SetMessageHandler<ServerConfigPacket>(OnConfigPacketReceived);
             }
+
+           api.ModLoader.GetModSystem<AWearableLightCore>().OnLongRefreshTick = api.Event.RegisterGameTickListener(CheckConfigChanges, 5000); // every 5 sec
+        }
+
+        protected void CheckConfigChanges(float dt)
+        {
+            if (!File.Exists(configPath)) return;
+
+            var currentWriteTime = File.GetLastWriteTimeUtc(configPath);
+
+            if (currentWriteTime <= lastConfigWriteTime) return;
+
+            lastConfigWriteTime = currentWriteTime;
+
+            ReloadConfig();
+        }
+
+        private void ReloadConfig()
+        {
+            Config = new LoadOrCreate().SapiConfig(api, ConfigServerName);
+
+            if (Config == null)
+            {
+                api.Logger.Error($"issue with {ConfigServerName}");
+                return;
+            }
+
+            WearableLightConfigHelper.Init(Config);
+
+            if (api is ICoreServerAPI sapi)
+            {
+                foreach (var player in sapi.World.AllOnlinePlayers)
+                {
+                    if (player is IServerPlayer sp)
+                    {
+                        SendToPlayer(sp);
+                    }
+                }
+            }
+
+
+            api.Logger.Debug("[AWearableLight] Config reloaded");
         }
 
         public void SendToPlayer(IServerPlayer player)
@@ -71,9 +130,9 @@ namespace AWearableLight.Network
 
             var packet = new ServerConfigPacket();
 
-            foreach (var entry in Config.FuelTypes)
+            foreach (var entry in Config.ItemTypes)
             {
-                packet.FuelTypes.Add(new FuelTypePacket
+                packet.ItemTypes.Add(new ItemTypePacket
                 {
                     Code = entry.Key,
                     UseFuel = entry.Value.UseFuel,
@@ -86,7 +145,7 @@ namespace AWearableLight.Network
             serverChannel.SendPacket(packet, player);
         }
 
-        private void OnConfigReceived(ServerConfigPacket packet)
+        private void OnConfigPacketReceived(ServerConfigPacket packet)
         {
             var capi = api as ICoreClientAPI;
 
@@ -94,12 +153,12 @@ namespace AWearableLight.Network
 
             var config = new Server
             {
-                FuelTypes = new Dictionary<string, FuelProps>()
+                ItemTypes = new Dictionary<string, LightProps>()
             };
 
-            foreach (var entry in packet.FuelTypes)
+            foreach (var entry in packet.ItemTypes)
             {
-                config.FuelTypes[entry.Code] = new FuelProps
+                config.ItemTypes[entry.Code] = new LightProps
                 {
                     UseFuel = entry.UseFuel,
                     PowerType = entry.PowerType,

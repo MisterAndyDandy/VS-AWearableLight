@@ -3,9 +3,13 @@ using AWearableLight.Interfaces;
 using AWearableLight.Network;
 using AWearableLight.Util;
 using ProtoBuf;
+using System;
+using System.IO;
+using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
@@ -31,6 +35,8 @@ namespace AWearableLight
         public static Client? ClientConfig;
 
         private double lastServerTotalHours;
+
+        public long OnLongRefreshTick {  get; set; } = 0;
 
         private long OnLongServerTick { get; set; } = 0;
 
@@ -69,7 +75,10 @@ namespace AWearableLight
         {
             base.StartClientSide(api);
 
-            ClientConfig = new LoadOrCreate().CapiConfig(api, ConfigClientName);
+            if(api.Side == EnumAppSide.Client)
+            {
+                ClientConfig = new LoadOrCreate().CapiConfig(api, ConfigClientName);
+            }
 
             clientToggleChannel = api.Network
             .RegisterChannel("awearablelighttoggle")
@@ -82,7 +91,6 @@ namespace AWearableLight
             api.Input.RegisterHotKey("toggleHoveredGearLight", Lang.Get("awearablelight:keybind-gearslot-description"), GlKeys.L, HotkeyType.CharacterControls, false, true, false);
             api.Input.SetHotKeyHandler("toggleHoveredGearLight", _ => OnToggleHoveredGearLightHotkey(api.World.Player));
 
-            JsonConfig(api);
         }
 
         public override void StartServerSide(ICoreServerAPI api)
@@ -101,7 +109,8 @@ namespace AWearableLight
                 configSync?.SendToPlayer(player);
             };
 
-            OnLongServerTick = api.Event.RegisterGameTickListener(OnServerTick, 1000, 200);
+    
+            OnLongServerTick = api.Event.RegisterGameTickListener(OnServerTick, 5000, 200);
         }
 
         public static void MigrateConfig(ICoreAPI api)
@@ -109,7 +118,7 @@ namespace AWearableLight
             if (ServerConfig == null) return;
 
             // Example: ensure FuelTypes exists
-            ServerConfig.FuelTypes ??= new();
+            ServerConfig.ItemTypes ??= new();
 
             api.StoreModConfig(ServerConfig, ConfigServerName);
 
@@ -122,6 +131,7 @@ namespace AWearableLight
             base.Dispose();
 
             Sapi?.Event.UnregisterGameTickListener(OnLongServerTick);
+            Sapi?.Event.UnregisterGameTickListener(OnLongRefreshTick);
 
             configSync = null;
             ServerConfig = null;
@@ -263,12 +273,5 @@ namespace AWearableLight
         }
 
         public void ToggleWearableItem(IServerPlayer player, TogglePacket packet) => ToggleWearableItem(player, packet.ItemSlot);
-
-        private void JsonConfig(ICoreAPI api)
-        {
-            if (ClientConfig == null) return;
-
-            api.World.Config.GetBool("EnableSound", ClientConfig.EnableSounds);
-        }
     }
 }

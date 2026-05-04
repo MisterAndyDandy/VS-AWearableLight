@@ -1,7 +1,6 @@
 ﻿using AWearableLight.Config;
 using AWearableLight.Interfaces;
 using AWearableLight.Util;
-using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -22,6 +21,8 @@ namespace AWearableLight
 
         private ICoreAPI? api {  get;  set; }
 
+        private Client? ClientConfig { get; set; }
+
         public CollectibleBehaviorAttachmentableLight(CollectibleObject collObj) : base(collObj)
         {
            
@@ -30,6 +31,11 @@ namespace AWearableLight
         public override void OnLoaded(ICoreAPI api)
         {
             this.api = api;
+
+            if (api.Side == EnumAppSide.Client)
+            {
+                ClientConfig = new LoadOrCreate().CapiConfig(api, "awearablelight-client.json");
+            }
 
             attSound = collObj.Attributes["sound"];
 
@@ -71,7 +77,9 @@ namespace AWearableLight
             if (LightState(stack) == active) return;
 
             // Play toggle sound
-            if (api.World.Config.GetAsBool("EnableSound", false) && player != null)
+            bool value = ClientConfig?.EnableSounds ?? true;
+
+            if (value && player != null)
             {
                 string soundPath = attSound?.AsString() ?? string.Empty;
 

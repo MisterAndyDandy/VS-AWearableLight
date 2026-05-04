@@ -13,11 +13,11 @@ namespace AWearableLight.Util
             config = cfg;
         }
 
-        public static FuelProps GetProps(AssetLocation code)
+        public static LightProps GetProps(AssetLocation code)
         {
-            if (config?.FuelTypes == null) return new FuelProps();
+            if (config?.ItemTypes == null) return new LightProps();
 
-            foreach (var entry in config.FuelTypes)
+            foreach (var entry in config.ItemTypes)
             {
                 if (string.IsNullOrEmpty(entry.Key)) continue;
 
@@ -27,12 +27,12 @@ namespace AWearableLight.Util
                 }
             }
 
-            return new FuelProps();
+            return new LightProps();
         }
 
         public static bool NeedFuel(AssetLocation code)
         {
-            if (config?.FuelTypes == null) return true;
+            if (config?.ItemTypes == null) return true;
 
             return GetProps(code).UseFuel;
         }
