@@ -3,7 +3,7 @@ using Vintagestory.API.MathTools;
 
 namespace AWearableLight.Util
 {
-    public class LightProps
+    public class FuelProps
     {
         public bool UseFuel = true;
         public float Capacity = 24f;

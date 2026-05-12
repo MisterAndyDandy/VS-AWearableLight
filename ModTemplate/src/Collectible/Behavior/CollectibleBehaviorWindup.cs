@@ -1,5 +1,6 @@
 ﻿
 using AWearableLight.Interfaces;
+using AWearableLight.Util;
 using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -31,10 +32,31 @@ namespace AWearableLight
             }
 
             (byEntity as EntityPlayer)?.Player?.InventoryManager.BroadcastHotbarSlot();
-            var fuel = GetPower(slot.Itemstack);
-            _ = fuel;
+  
             handling = EnumHandling.Handled;
             return base.OnHeldInteractStep(secondsUsed, slot, byEntity, blockSel, entitySel, ref handling);
+        }
+
+        public override int GetMergableQuantity(ItemStack sinkStack, ItemStack sourceStack, EnumMergePriority priority, ref EnumHandling handling)
+        {
+            if (priority == EnumMergePriority.DirectMerge)
+            {
+                if (!WearableLightConfigHelper.NeedFuel(sourceStack.Collectible.Code))
+                {
+                    return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
+                }
+
+                float fuel = GetStackFuel(sourceStack, sinkStack);
+
+                if (fuel <= 0f)
+                {
+                    return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
+                }
+
+                return 0;
+            }
+
+            return base.GetMergableQuantity(sinkStack, sourceStack, priority, ref handling);
         }
 
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
@@ -67,9 +89,9 @@ namespace AWearableLight
             SetPower(sourceStack, GetPower(sourceStack) + amount);
         }
 
-        public void ConsumePower(ItemStack stack, double amount)
+        public void ConsumePower(ItemSlot sourceSlot, EntityPlayer entityPlayer,  double amount)
         { 
-            SetPower(stack, GetPower(stack) - amount); 
+            SetPower(sourceSlot.Itemstack, GetPower(sourceSlot.Itemstack) - amount); 
         }
 
         public bool HasPower(ItemStack stack)
@@ -84,9 +106,12 @@ namespace AWearableLight
 
         public bool NeedPower(ItemStack sourceStack)
         {
-            return true;
+            return false;
         }
 
-  
+        public float GetStackFuel(ItemStack sourceStack, ItemStack sinkStack)
+        {
+            return 0;
+        }
     }
 }

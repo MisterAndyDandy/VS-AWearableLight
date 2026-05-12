@@ -81,7 +81,7 @@ namespace AWearableLight.Network
                     .SetMessageHandler<ServerConfigPacket>(OnConfigPacketReceived);
             }
 
-           api.ModLoader.GetModSystem<AWearableLightCore>().OnLongRefreshTick = api.Event.RegisterGameTickListener(CheckConfigChanges, 5000); // every 5 sec
+           api.ModLoader.GetModSystem<AWearableLightCore>().OnLongRefreshTick = api.Event.RegisterGameTickListener(CheckConfigChanges, 100000); // every 1 mins
         }
 
         protected void CheckConfigChanges(float dt)
@@ -153,12 +153,12 @@ namespace AWearableLight.Network
 
             var config = new Server
             {
-                ItemTypes = new Dictionary<string, LightProps>()
+                ItemTypes = new Dictionary<string, FuelProps>()
             };
 
             foreach (var entry in packet.ItemTypes)
             {
-                config.ItemTypes[entry.Code] = new LightProps
+                config.ItemTypes[entry.Code] = new FuelProps
                 {
                     UseFuel = entry.UseFuel,
                     PowerType = entry.PowerType,

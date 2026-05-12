@@ -3,13 +3,9 @@ using AWearableLight.Interfaces;
 using AWearableLight.Network;
 using AWearableLight.Util;
 using ProtoBuf;
-using System;
-using System.IO;
-using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
@@ -18,7 +14,7 @@ namespace AWearableLight
     #nullable enable
 
     [ProtoContract]
-    public sealed class TogglePacket
+    public sealed class AWearableLightPacket
     {
         [ProtoMember(1)]
         public int ItemSlot { get; set; }
@@ -30,24 +26,29 @@ namespace AWearableLight
 
         private static readonly string ConfigClientName = "awearablelight-client.json";
 
-        public static Server? ServerConfig;
+        public static Server? ServerConfig { get; set; }
 
-        public static Client? ClientConfig;
+        public static Client? ClientConfig { get; set; }
 
         private double lastServerTotalHours;
 
         public long OnLongRefreshTick {  get; set; } = 0;
 
+        public long OnLongParticleTick { get; set; } = 0;
+
         private long OnLongServerTick { get; set; } = 0;
 
         private ICoreServerAPI? Sapi { get; set; }
 
+        private ICoreClientAPI? Capi { get; set; }
 
-        private IClientNetworkChannel? clientToggleChannel;
+        private bool warnedDynamicLights;
 
-        private IServerNetworkChannel? serverToggleChannel;
+        private IClientNetworkChannel? ClientToggleChannel { get; set; }
 
-        private ConfigSyncSystem? configSync;
+        private IServerNetworkChannel? ServerToggleChannel { get; set; }
+
+        public ConfigSyncSystem? ConfigSync { get; set; }
 
         public override void Start(ICoreAPI api)
         {
@@ -59,13 +60,12 @@ namespace AWearableLight
                 WearableLightConfigHelper.Init(ServerConfig);
             }
 
-            // ❌ remove client config loading
-
-            configSync = new ConfigSyncSystem(
+            ConfigSync = new ConfigSyncSystem(
                 api,
                 api.Side == EnumAppSide.Server ? ServerConfig : null
             );
 
+            
             api.RegisterCollectibleBehaviorClass("awearablelight:AttachmentableLight", typeof(CollectibleBehaviorAttachmentableLight));
             api.RegisterCollectibleBehaviorClass("awearablelight:Fuel", typeof(CollectibleBehaviorFuel));
             api.RegisterCollectibleBehaviorClass("awearablelight:WindUp", typeof(CollectibleBehaviorWindup));
@@ -75,15 +75,13 @@ namespace AWearableLight
         {
             base.StartClientSide(api);
 
-            if(api.Side == EnumAppSide.Client)
-            {
-                ClientConfig = new LoadOrCreate().CapiConfig(api, ConfigClientName);
-            }
+            Capi = api;
 
-            clientToggleChannel = api.Network
+            ClientConfig = new LoadOrCreate().CapiConfig(api, ConfigClientName);
+
+            ClientToggleChannel = api.Network
             .RegisterChannel("awearablelighttoggle")
-            .RegisterMessageType<TogglePacket>();
-
+            .RegisterMessageType<AWearableLightPacket>();
 
             api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-activeslot-description"), GlKeys.L);
             api.Input.SetHotKeyHandler("toggleLight", _ => OnToggleLightHotkey(api.World.Player));
@@ -91,6 +89,23 @@ namespace AWearableLight
             api.Input.RegisterHotKey("toggleHoveredGearLight", Lang.Get("awearablelight:keybind-gearslot-description"), GlKeys.L, HotkeyType.CharacterControls, false, true, false);
             api.Input.SetHotKeyHandler("toggleHoveredGearLight", _ => OnToggleHoveredGearLightHotkey(api.World.Player));
 
+            api.Event.PlayerJoin += ErrorMessage;
+
+            new ParticleSystemCore(api).StartParticle();
+        }
+
+        private void ErrorMessage(IClientPlayer byPlayer)
+        {
+            if (warnedDynamicLights || byPlayer == null || Capi == null) return;
+
+            int maxlights = Capi.Settings.Int["maxdynamiclights"];
+
+            if (maxlights < 10)
+            {
+                warnedDynamicLights = true;
+
+                Capi.ShowChatMessage($"[{this.Mod.Info.Name}] Max Dynamic Lights is set to {maxlights}. Some wearable lights may not be visible. Recommended: 15+");
+            }
         }
 
         public override void StartServerSide(ICoreServerAPI api)
@@ -99,30 +114,17 @@ namespace AWearableLight
 
             Sapi = api;
 
-            serverToggleChannel = api.Network
+            ServerToggleChannel = api.Network
             .RegisterChannel("awearablelighttoggle")
-            .RegisterMessageType<TogglePacket>()
-            .SetMessageHandler<TogglePacket>(ToggleWearableItem);
+            .RegisterMessageType<AWearableLightPacket>()
+            .SetMessageHandler<AWearableLightPacket>(ToggleWearableItem);
 
             api.Event.PlayerNowPlaying += (player) =>
             {
-                configSync?.SendToPlayer(player);
+                ConfigSync?.SendToPlayer(player);
             };
 
-    
-            OnLongServerTick = api.Event.RegisterGameTickListener(OnServerTick, 5000, 200);
-        }
-
-        public static void MigrateConfig(ICoreAPI api)
-        {
-            if (ServerConfig == null) return;
-
-            // Example: ensure FuelTypes exists
-            ServerConfig.ItemTypes ??= new();
-
-            api.StoreModConfig(ServerConfig, ConfigServerName);
-
-            api.Logger.Notification($"[WearableLight] Config migrated to version {ServerConfig.Version}.");
+            OnLongServerTick = api.Event.RegisterGameTickListener(OnServerTick, 1000, 200);
 
         }
 
@@ -132,8 +134,9 @@ namespace AWearableLight
 
             Sapi?.Event.UnregisterGameTickListener(OnLongServerTick);
             Sapi?.Event.UnregisterGameTickListener(OnLongRefreshTick);
+            Capi?.Event.UnregisterGameTickListener(OnLongParticleTick);
 
-            configSync = null;
+            ConfigSync = null;
             ServerConfig = null;
             ClientConfig = null;
         }
@@ -143,65 +146,27 @@ namespace AWearableLight
             if (Sapi == null) return;
 
             double totalHours = Sapi.World.Calendar.TotalHours;
-            double elapsedHours = totalHours - lastServerTotalHours;
+            double hoursPassed = totalHours - lastServerTotalHours;
 
-            if (elapsedHours <= 0.05) return;
-
-            IPlayer[] allOnlinePlayers = Sapi.World.AllOnlinePlayers;
-            int count = allOnlinePlayers.Length;
-
-            for (int i = 0; i < count; i++)
+            foreach (IPlayer? player in Sapi.World.AllOnlinePlayers)
             {
-                IPlayer player = allOnlinePlayers[i];
+                if (player.Entity == null) continue;
 
-                if (player?.Entity == null) continue;
+                IInventory? inventory = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
 
-                IInventory characterInv = player.InventoryManager.GetOwnInventory("character");
+                if (inventory == null) continue;
 
-                if (characterInv == null) continue;
-
-                for (int slotId = 0; slotId < characterInv.Count; slotId++)
+                foreach (ItemSlot slot in inventory)
                 {
-                    ItemSlot slot = characterInv[slotId];
-
                     if (slot == null || slot.Empty) continue;
 
-                    ItemStack stack = slot.Itemstack;
-
-                    IPowerSource powerType = stack.Collectible.GetCollectibleInterface<IPowerSource>();
-
-                    if(powerType == null) continue;
-
-                    // Only look for items that use fuel.
-                    if (!WearableLightConfigHelper.NeedFuel(stack.Collectible.Code)) continue;
-
-                    // Only active lights drain
-                    if (!stack.Attributes.GetAsBool("togglelight")) continue;
-
-                    // Optional future fuel behavior
-
-                    double fuel = powerType.GetPower(stack);
-
-                    var light = stack.Collectible.GetCollectibleBehavior<CollectibleBehaviorAttachmentableLight>(true);
-
-                    // Auto shutoff
-                    if (fuel <= 0)
+                    // Skip non-fuel items
+                    if (!WearableLightConfigHelper.NeedFuel(slot.Itemstack.Collectible.Code))
                     {
-                        powerType.SetPower(stack, 0);
-                        light.SetLightActive(slot, false, player.Entity);
-                        slot.MarkDirty();
                         continue;
                     }
 
-                    // Drain fuel
-                    powerType.ConsumePower(stack, elapsedHours);
-
-                    // Clamp after drain
-                    if (powerType.GetPower(stack) <= 0)
-                    {
-                        powerType.SetPower(stack, 0);
-                        light.SetLightActive(slot, false, player.Entity);
-                    }
+                    slot.Itemstack.Collectible.GetCollectibleInterface<IPowerSource>()?.ConsumePower(slot, player.Entity, hoursPassed);
 
                     slot.MarkDirty();
                 }
@@ -220,6 +185,8 @@ namespace AWearableLight
 
             ItemSlot? currentSlot = player.InventoryManager.ActiveHotbarSlot;
 
+            var logger = player.Entity.Api.Logger;
+
             // Gear slot override
             if (itemslot != -1 && invGear != null)
             {
@@ -228,15 +195,12 @@ namespace AWearableLight
 
             if (currentSlot == null || currentSlot.Empty) return false;
 
-            if (currentSlot.Itemstack.Collectible
-                .GetCollectibleBehavior<CollectibleBehaviorAttachmentableLight>(true)
-                is not CollectibleBehaviorAttachmentableLight attachmentableLight)
-            {
-                return false;
-            }
+            var attachmentableLight = currentSlot.Itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorAttachmentableLight>(true);
 
-            // Toggle state
-            bool newState =! attachmentableLight.LightState(currentSlot.Itemstack);
+            if (attachmentableLight == null) return false;
+
+            bool newState =
+             !attachmentableLight.LightState(currentSlot.Itemstack);
 
             attachmentableLight.SetLightActive(
                 currentSlot,
@@ -244,11 +208,25 @@ namespace AWearableLight
                 player.Entity
             );
 
+            currentSlot.MarkDirty();
+
             // Sync to server
-            clientToggleChannel?.SendPacket(new TogglePacket
-            {
-                ItemSlot = itemslot
-            });
+            ClientToggleChannel?.SendPacket(
+                new AWearableLightPacket
+                {
+                    ItemSlot = itemslot
+                }
+            );
+
+            // Logging
+            LoggerExt.SendLogger(
+                Capi,
+                [
+                    $"Item: {currentSlot.Itemstack.Collectible.Code}",
+                    $"Toggled: {newState}",
+                    $"Player: {player.PlayerName}"
+                ]
+            );
 
             return true;
         }
@@ -267,11 +245,16 @@ namespace AWearableLight
             ItemSlot? hoveredSlot = player.InventoryManager.CurrentHoveredSlot;
             int itemslot = invGear?.GetSlotId(hoveredSlot) ?? -1;
 
-            if (itemslot == -1) return false;
+            if (itemslot == -1) 
+            {
+                return false;
+            }
+
+            LoggerExt.SendLogger(Capi, [$"The current slot that {player.PlayerName} is hovered over: {itemslot}"] );
 
             return ToggleWearableItem(player, itemslot);
         }
 
-        public void ToggleWearableItem(IServerPlayer player, TogglePacket packet) => ToggleWearableItem(player, packet.ItemSlot);
+        public void ToggleWearableItem(IServerPlayer player, AWearableLightPacket packet) => ToggleWearableItem(player, packet.ItemSlot);
     }
 }

@@ -6,26 +6,85 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace AWearableLight
 {
 
-    #nullable enable
+#nullable enable
+
+    public class AttachmentableLightProp
+    {
+        public string soundPath { get; set; } = string.Empty;
+
+        public float warmthBouse { get; set; } = 0f;
+
+        public ParticleProp? particleProp { get; set; }
+
+        //public RelaxedReadOnlyDictionary<string, ParticleProp>? particleProps { get; set; }
+
+        public static AttachmentableLightProp? ReadFrom(ItemStack itemStack)
+        {
+            if(itemStack == null) return null;
+
+            AttachmentableLightProp? attachmentableLightStats = itemStack.Collectible.Attributes?["attachmentableLightProp"]?.AsObject<AttachmentableLightProp>();
+
+            if (attachmentableLightStats == null)
+            {
+                return null;
+            }
+
+            return attachmentableLightStats;
+        }
+
+        public static AttachmentableLightProp? ReadFrom(CollectibleObject colObj)
+        {
+            if(colObj == null)
+            {
+                return null;
+            }
+
+            AttachmentableLightProp? attachmentableLightProp = colObj.Attributes?["attachmentableLightProp"]?.AsObject<AttachmentableLightProp>();
+
+            if (attachmentableLightProp == null)
+            {
+                return null;
+            }
+
+            return attachmentableLightProp; 
+        }
+
+
+        public class ParticleProp 
+        {
+            public string Colour { get; set; } = string.Empty;
+
+            public Vec3d AttachmentPoint { get; set; } = new Vec3d();
+
+        }
+    }
+
 
     class CollectibleBehaviorAttachmentableLight : CollectibleBehavior
     {
-        private JsonObject? attSound;
-
         private IPowerSource? powerType => collObj.GetCollectibleInterface<IPowerSource>();
 
-        private ICoreAPI? api {  get;  set; }
+        private ICoreAPI? api { get; set; }
 
         private Client? ClientConfig { get; set; }
 
+        public AttachmentableLightProp? attachmentableLightProp => AttachmentableLightProp.ReadFrom(this.collObj);
+
+        public AdvancedParticleProperties? advancedParticle 
+        {
+            get; 
+            set;
+        } = new AdvancedParticleProperties();
+
         public CollectibleBehaviorAttachmentableLight(CollectibleObject collObj) : base(collObj)
         {
-           
         }
 
         public override void OnLoaded(ICoreAPI api)
@@ -37,7 +96,9 @@ namespace AWearableLight
                 ClientConfig = new LoadOrCreate().CapiConfig(api, "awearablelight-client.json");
             }
 
-            attSound = collObj.Attributes["sound"];
+            advancedParticle?.Init(api);
+
+            _ = collObj.ParticleProperties;
 
             base.OnLoaded(api);
         }
@@ -56,7 +117,7 @@ namespace AWearableLight
             bool hasFuel = powerType?.HasPower(stack) ?? false;
 
             // Only block activation if no fuel
-            if (active && powerType != null && !hasFuel && WearableLightConfigHelper.NeedFuel(stack.Collectible.Code))
+            if (active && !hasFuel && WearableLightConfigHelper.NeedFuel(stack.Collectible.Code))
             {
                 if (api?.Side == EnumAppSide.Client)
                 {
@@ -70,6 +131,7 @@ namespace AWearableLight
                     );
                 }
 
+
                 return;
             }
 
@@ -81,7 +143,7 @@ namespace AWearableLight
 
             if (value && player != null)
             {
-                string soundPath = attSound?.AsString() ?? string.Empty;
+                string soundPath = attachmentableLightProp?.soundPath ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(soundPath))
                 {
@@ -119,8 +181,6 @@ namespace AWearableLight
             }
 
             slot.MarkDirty();
-
-            player?.Player?.InventoryManager.BroadcastHotbarSlot();
         }
 
         public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)
@@ -133,12 +193,12 @@ namespace AWearableLight
                     MouseButton = EnumMouseButton.None,
                     HotKeyCode = "toggleLight"
                 },
-                new WorldInteraction 
+                new WorldInteraction
                 {
                     ActionLangCode = Lang.GetMatching("awearablelight:heldhelp-toggle-gearslot"),
                     MouseButton = EnumMouseButton.None,
                     HotKeyCode = "toggleHoveredGearLight"
-                    
+
                 }
             }.Append(base.GetHeldInteractionHelp(inSlot, ref handling));
         }

@@ -1,5 +1,4 @@
-﻿using AWearableLight.Config;
-using AWearableLight.Util;
+﻿using AWearableLight.Util;
 using System.Collections.Generic;
 using Vintagestory.API.MathTools;
 
@@ -9,11 +8,11 @@ namespace AWearableLight.Config
     {
         public int Version { get; protected set; } = 1;
 
-        public Dictionary<string, LightProps> ItemTypes = new()
+        public Dictionary<string, FuelProps> ItemTypes = new()
         {
             {
                 "awearablelight:clothes-head-torch-*",
-                new LightProps
+                new FuelProps
                 {
                     UseFuel = false,
                     PowerType = "windup",
@@ -23,7 +22,7 @@ namespace AWearableLight.Config
             },
             {
                 "awearablelight:clothes-head-candle*",
-                new LightProps
+                new FuelProps
                 {
                     UseFuel = true,
                     PowerType = "fuel",
@@ -36,7 +35,7 @@ namespace AWearableLight.Config
             },
             {
                 "awearablelight:clothes-head-oil-lamp-*",
-                new LightProps
+                new FuelProps
                 {
                     UseFuel = true,
                     PowerType = "fuel",
@@ -50,7 +49,7 @@ namespace AWearableLight.Config
             },
             {
                 "awearablelight:clothes-waist-heavy-belt-brass-lantern-*",
-                new LightProps
+                new FuelProps
                 {
                     UseFuel = true,
                     PowerType = "fuel",

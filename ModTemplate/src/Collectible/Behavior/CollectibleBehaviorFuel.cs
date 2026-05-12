@@ -1,4 +1,4 @@
-﻿using AWearableLight.Config;
+﻿
 using AWearableLight.Interfaces;
 using AWearableLight.Util;
 using System.Collections.Generic;
@@ -8,9 +8,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
 using Vintagestory.API.Util;
-using Vintagestory.GameContent;
 
 namespace AWearableLight
 {
@@ -28,7 +26,7 @@ namespace AWearableLight
         {
             Api = api;
 
-            LightProps lightProps = WearableLightConfigHelper.GetProps(collObj.Code);
+            FuelProps lightProps = WearableLightConfigHelper.GetProps(collObj.Code);
 
             FuelCapacity = lightProps.Capacity > 0 ? lightProps.Capacity : FuelCapacity;
 
@@ -253,12 +251,38 @@ namespace AWearableLight
             sourceStack.Attributes.SetDouble("fuelHours", GameMath.Clamp(amount, 0, FuelCapacity));
         }
 
-        public virtual void ConsumePower(ItemStack sourceStack, double amount)
+        public virtual void ConsumePower(ItemSlot slot, EntityPlayer entityPlayer, double amount)
         {
-            if (amount <= 0) return;
+            if (slot?.Itemstack?.Attributes == null) return;
 
-            double fuel = GetPower(sourceStack) - amount;
-            SetPower(sourceStack, fuel);
+            var attachmentableLight =
+                slot.Itemstack.Collectible
+                    .GetCollectibleBehavior<CollectibleBehaviorAttachmentableLight>(true);
+
+            if (attachmentableLight == null) return;
+
+            // Only consume while active
+            if (!attachmentableLight.LightState(slot.Itemstack))
+            {
+                return;
+            }
+
+            double fuel = GetPower(slot.Itemstack);
+
+            SetPower(slot.Itemstack, fuel - amount);
+
+            fuel = GetPower(slot.Itemstack);
+
+            if (fuel <= 0)
+            {
+                attachmentableLight.SetLightActive(
+                    slot,
+                    false,
+                    entityPlayer
+                );
+            }
+
+            slot.MarkDirty();
         }
 
         public virtual void AddPower(ItemStack sourceStack, ItemStack sinkStack, double amount)
