@@ -25,25 +25,41 @@
 		}
 	},
 	"storageFlags": 128,
-	behaviors: [
+	"behaviors": [
 		{ "name": "Wearable" },
 		{ "name": "awearablelight:Fuel" },
         { "name": "awearablelight:AttachmentableLight" }
     ],
-	"attributes":{
-		"wearableAttachment": true,
+	"attributes": {
 		"clothescategory": "head",
-		"attachmentableLightPropByType":{
-			"@.*-(on)": {
-				"soundPath": "game:sounds/effect/extinguish",
-					"particleProp": {
-						"attachmentPoint": {
-							"x": -0.02,
-							"y": 0.3,
-							"z": -0.3
-						},
-						"colour": "red"
-				}
+		"wearableAttachment": true
+	},
+	"attributesByType":{
+		"@.*-(candle1-on|candle2-on)": 
+		{	
+			"warmth": 0.25,
+			"attachmentableLightProp":
+			{
+					"soundPath": "game:sounds/effect/extinguish",
+					"chanceExtinguish": 0.2,
+					"extinguishOffsetY": 6
+			}
+		},
+		"@.*-(oil-lamp-on)": 
+		{	
+			"warmth": 0.5,
+			"attachmentableLightProp":
+			{
+					"soundPath": "game:sounds/effect/extinguish",
+					"chanceExtinguish": 0.05,
+					"extinguishOffsetY": 6
+			}
+		},
+		"@.*-(torch-on)": 
+		{
+			"attachmentableLightProp":
+			{
+					"soundPath": "game:sounds/effect/extinguish"
 			}
 		}
 	},
@@ -67,7 +83,6 @@
 		"@.*-(candle1-on)": [ 9, 3, 4 ],
 		"@.*-(candle2-on)": [ 9, 4, 6 ]
 	},
-	"heldRightReadyAnimation": null,
 	"renderAlphaTest": 0.25,
 	"fpHandTransformByType": {
 		"@.*-(oil-lamp-on|oil-lamp-off|torch-off|torch-on|candle1-off|candle1-on|candle2-off|candle2-on)": {
@@ -166,78 +181,5 @@
 			},
 			"scale": 3
 		}
-	},
-	particlePropertiesByType: {
-		"@.*-(on)":
-		[
-			{
-				// Fire cubes
-				hsvaColor: [{ avg: 30, var: 20 }, { avg: 255, var: 50 }, { avg: 255, var: 50 },  { avg: 255, var: 0 }],
-				gravityEffect: { avg: 0, var: 0 },
-				velocity: [ { avg: 0.2, var: 0.05 }, { avg: 0.5, var: 0.1 }, { avg: 0, var: 0.2 }],
-				posOffset: [ { var: 0.2 }, { var: 0.1 }, { var: 0.2 } ],
-				quantity: { avg: 0 },
-				size: { avg: 0.25, var: 0 },
-				vertexFlags: 128,
-				sizeEvolve: { transform: "quadratic", factor: -0.5 },
-				selfPropelled: true
-			},
-			{
-				// Fire quads
-				hsvaColor: [{ avg: 30, var: 20 }, { avg: 255, var: 50 }, { avg: 255, var: 50 },  { avg: 255, var: 0 }],
-				opacityEvolve: { transform: "quadratic", factor: -16 },
-				gravityEffect: { avg: 0, var: 0 },
-				velocity: [ { avg: 0, var: 0.02 }, { avg: 0.1, var: 0.05 }, { avg: 0, var: 0.02 }],
-				posOffset: [ { var: 0.2 }, { var: 0.0 }, { var: 0.2 } ],
-				quantity: { avg: 0 },
-				vertexFlags: 128,
-				size: { avg: 0.1, var: 0.05 },
-				sizeEvolve: { transform: "linear", factor: 1.8 },
-				particleModel: "Quad",
-				lifeLength: { avg: 0.5 } ,
-				selfPropelled: true
-			},
-			{
-				// Smoke
-				hsvaColor: [{ avg: 0, var: 0 }, { avg: 0, var: 0 }, { avg: 40, var: 30 },  { avg: 220, var: 50 }],
-				opacityEvolve: { transform: "quadratic", factor: -16 },
-				gravityEffect: { avg: 0, var: 0 },
-				velocity: [ { avg: 0, var: 0.05 }, { avg: 0.1, var: 0.05 }, { avg: 0, var: 0.05 }],
-				posOffset: [ { var: 0.2 }, { var: 0.1 }, { var: 0.2 } ],
-				quantity: { avg: 0 },
-				size: { avg: 0.3, var: 0.05 },
-				sizeEvolve: { transform: "linear", factor: 1.5 },
-				particleModel: "Quad",
-				lifeLength: { avg: 4 } 
-			}
-		],
-		"@.*-(torch-on)": [
-			{
-				// Glow
-				hsvaColor: [{ avg: 0, var: 0 }, { avg: 0, var: 0 }, { avg: 40, var: 30 },  { avg: 220, var: 50 }],
-				opacityEvolve: { transform: "quadratic", factor: -16 },
-				gravityEffect: { avg: 0, var: 0 },
-				velocity: [ { avg: 0, var: 0.05 }, { avg: 0.1, var: 0.05 }, { avg: 0, var: 0.05 }],
-				posOffset: [ { var: 0.2 }, { var: 0.1 }, { var: 0.2 } ],
-				quantity: { avg: 0 },
-				size: { avg: 0.3, var: 0.05 },
-				sizeEvolve: { transform: "linear", factor: 1.5 },
-				particleModel: "Quad",
-				lifeLength: { avg: 4 } 
-			},
-			{
-				// Glow
-				hsvaColor: [{ avg: 0, var: 0 }, { avg: 0, var: 0 }, { avg: 40, var: 30 },  { avg: 220, var: 50 }],
-				opacityEvolve: { transform: "quadratic", factor: -16 },
-				gravityEffect: { avg: 0, var: 0 },
-				velocity: [ { avg: 0, var: 0.05 }, { avg: 0.1, var: 0.05 }, { avg: 0, var: 0.05 }],
-				posOffset: [ { var: 0.2 }, { var: 0.1 }, { var: 0.2 } ],
-				quantity: { avg: 0 },
-				size: { avg: 0.3, var: 0.05 },
-				sizeEvolve: { transform: "linear", factor: 1.5 },
-				particleModel: "Quad",
-				lifeLength: { avg: 4 } 
-			}
-		]
 	}
 }

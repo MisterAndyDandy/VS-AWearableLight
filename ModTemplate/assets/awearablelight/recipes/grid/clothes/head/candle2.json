@@ -19,7 +19,6 @@
   },
   "width": 1,
   "height": 3,
-  "attributes": { "stackFuelHours": 8 },
   "output": {
     "type": "item",
     "code": "clothes-head-candle2-off"

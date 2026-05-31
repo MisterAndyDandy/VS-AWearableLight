@@ -12,8 +12,22 @@
 
 	"item-basepart-*": "Candle (Base)",
 
+	"item-clothes-waist-heavy-belt-tinbronze-lantern-off": "Tinbronze Lantern (Unlit)",
+	"item-clothes-waist-heavy-belt-tinbronze-lantern-on": "Tinbronze Lantern (Lit)",
 	"item-clothes-waist-heavy-belt-brass-lantern-off": "Brass Lantern (Unlit)",
 	"item-clothes-waist-heavy-belt-brass-lantern-on": "Brass Lantern (Lit)",
+	"item-clothes-waist-heavy-belt-blackbronze-lantern-off": "Blackbronze Lantern (Unlit)",
+	"item-clothes-waist-heavy-belt-blackbronze-lantern-on": "Blackbronze Lantern (Lit)",
+	"item-clothes-waist-heavy-belt-copper-lantern-off": "Copper Lantern (Unlit)",
+	"item-clothes-waist-heavy-belt-copper-lantern-on": "Copper Lantern (Lit)",
+	"item-clothes-waist-heavy-belt-iron-lantern-off": "Iron Lantern (Unlit)",
+	"item-clothes-waist-heavy-belt-iron-lantern-on": "Iron Lantern (Lit)",	
+	"item-clothes-waist-heavy-belt-gold-lantern-off": "Gold Lantern (Unlit)",
+	"item-clothes-waist-heavy-belt-gold-lantern-on": "Gold Lantern (Lit)",
+	"item-clothes-waist-heavy-belt-silver-lantern-off": "Silver Lantern (Unlit)",
+	"item-clothes-waist-heavy-belt-silver-lantern-on": "Silver Lantern (Lit)",
+	"item-clothes-waist-heavy-belt-bismuthbronze-lantern-off": "Bismuthbronze Lantern (Unlit)",
+	"item-clothes-waist-heavy-belt-bismuthbronze-lantern-on": "Bismuthbronze Lantern (Lit)",
 
 	"item-backpack": "Backpack (Brass Lantern)",
 
@@ -25,7 +39,8 @@
 	"awearablelight:keybind-activeslot-description": "Toggle light (Hotbar slot)",
 	"awearablelight:keybind-gearslot-description": "Toggle light (Gear slot)",
 
-	"awearablelight:fuel-hours": "Fuel: {0}/{1} hours",
+	"awearablelight:fuel-hours": "Fuel: {0}/{1} hours",	
+	"awearablelight:on-crafted-fuel": "Crafted with {0}/{1} hours of fuel",
 	"awearablelight:ingameerror-light-full": "{0} is full",
 	"awearablelight:ingameerror-light-nofuel": "{0} has no fuel",
 

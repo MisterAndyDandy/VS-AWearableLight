@@ -9,46 +9,66 @@
 			"code": "waist",
 			"states": [
 				"heavy-belt-brass-lantern-off",
-				"heavy-belt-brass-lantern-on"
+				"heavy-belt-brass-lantern-on",
+				"heavy-belt-tinbronze-lantern-on",
+				"heavy-belt-tinbronze-lantern-off",
+				"heavy-belt-iron-lantern-on",
+				"heavy-belt-iron-lantern-off",
+				"heavy-belt-copper-lantern-on",
+				"heavy-belt-copper-lantern-off",
+				"heavy-belt-blackbronze-lantern-off",
+				"heavy-belt-blackbronze-lantern-on",
+				"heavy-belt-gold-lantern-on",
+				"heavy-belt-gold-lantern-off",
+				"heavy-belt-bismuthbronze-lantern-off",
+				"heavy-belt-bismuthbronze-lantern-on",
+				"heavy-belt-silver-lantern-off",
+				"heavy-belt-silver-lantern-on"
 			]
 		}
 	],
-	"shape": { "base": "awearablelight:entity/humanoid/seraph/clothing/waist/{waist}" },
+	"shapeByType": {
+		"*": {
+			"base": "awearablelight:entity/humanoid/seraph/clothing/{category}/{waist}"
+		}
+	},
 	"storageFlags": 128,
-	behaviors: [
+	"behaviors": [
 		{ "name": "Wearable" },
 		{ "name": "awearablelight:Fuel" },
         { "name": "awearablelight:AttachmentableLight" }
     ],
-	"attributesByType": {
-		"*-heavy-belt-brass-lantern-off": {
-			"sound": null, // Not being used yet
-			"wearableAttachment": true,
-			"clothescategory": "waist",
-			"warmth": 0.5
-		},
-		"*-heavy-belt-brass-lantern-on": {
-			"sound": "game:sounds/effect/extinguish",
-			"wearableAttachment": true,
-			"clothescategory": "waist",
-			"warmth": 0.5,
-			"warmth-bouse": 0.35
+	"attributes": {
+		"clothescategory": "waist",
+		"wearableAttachment": true
+	},
+	"attributesByType":{
+		"@.*-(on)": 
+		{		
+			"warmth": 0.25,
+			"attachmentableLightProp":
+			{
+					"soundPath": "game:sounds/effect/extinguish",
+					"extinguishOffsetY": 4
+			}
 		}
 	},
-	"textures": {
-		"seraph": { "base": "game:block/transparent" }
+	"texturesByType": {
+		"@.*-(off|on)": {
+			"seraph": { "base": "game:block/transparent" }
+		},
+		"*": {
+			"seraph": { "base": "awearablelight:entity/humanoid/seraphclothes/{category}/{waist}" }
+		}
 	},
 	"creativeinventory": {
-		"general": [ "*-heavy-belt-brass-lantern-off" ],
-		"items": [ "*-heavy-belt-brass-lantern-off" ],
-		"clothing": [ "*-heavy-belt-brass-lantern-off" ],
-		"awearablelight": [ "*-heavy-belt-brass-lantern-off" ]
+		"general": [ "@.*-(off)" ],
+		"items": [ "@.*-(off)" ],
+		"clothing": [ "@.*-(off)" ],
+		"awearablelight": [ "@.*-(off)" ]
 	},
 	"lightHsvbyType": {
-		"*-heavy-belt-brass-lantern-on": [ 6, 4, 12 ]
-	},
-	"heldRightReadyAnimationByTpe": {
-		"*-heavy-belt-brass-lantern-on": null
+		"@.*-(on)": [ 6, 4, 12 ]
 	},
 	"renderAlphaTest": 0.25,
 	"fpHandTransform": {
@@ -77,25 +97,24 @@
 		},
 		"scale": 0.55
 	},
-	"guiTransformByType": {
-		"*": {
-			"translation": {
-				"x": 0,
-				"y": 0,
-				"z": 19
-			},
-			"rotation": {
-				"x": 174,
-				"y": -45,
-				"z": 23
-			},
-			"origin": {
-				"x": 0.4,
-				"y": 0.9,
-				"z": 0.45
-			},
-			"scale": 2.7
-		}
+	"guiTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 19
+		},
+		"rotation": {
+			"x": 174,
+			"y": -45,
+			"z": 23
+		},
+		"origin": {
+			"x": 0.4,
+			"y": 0.9,
+			"z": 0.45
+		},
+		"scale": 2.7
+	
 	},
 	"groundTransform": {
 		"translation": {

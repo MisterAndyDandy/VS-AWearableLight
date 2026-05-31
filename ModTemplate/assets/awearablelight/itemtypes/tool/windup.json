@@ -6,7 +6,7 @@
 	behaviors: [
 		{ "name": "awearablelight:WindUp" }
     ],
-	shape: { base: "block/basic/cube" },
+	shape: { base: "game:block/basic/cube" },
 	creativeinventory: { "general": ["*"], "items": ["*"], "tools": ["*"] },
 	guiTransform: {
 		translation: { x: 0, y: 0, z: 0 },

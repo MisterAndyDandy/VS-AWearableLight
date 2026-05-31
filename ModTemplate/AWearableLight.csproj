@@ -49,7 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\awearablelight\itemtypes\armors\" />
-    <Folder Include="src\Entity\" />
+    <Folder Include="src\Effects\" />
     <Folder Include="src\Item\" />
+    <Folder Include="src\Render\" />
   </ItemGroup>
 </Project>

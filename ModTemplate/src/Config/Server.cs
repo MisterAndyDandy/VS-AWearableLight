@@ -1,63 +1,186 @@
 ﻿using AWearableLight.Util;
 using System.Collections.Generic;
-using Vintagestory.API.MathTools;
 
 namespace AWearableLight.Config
 {
     public class Server
     {
-        public int Version { get; protected set; } = 1;
+        public int Version { get; set; } = 2;
 
-        public Dictionary<string, FuelProps> ItemTypes = new()
+        public Dictionary<string, FuelProps> ItemTypes { get; set; } = new()
         {
             {
                 "awearablelight:clothes-head-torch-*",
                 new FuelProps
                 {
-                    UseFuel = false,
+                   
                     PowerType = "windup",
-                    FuelList = new(),
+                    UseFuel = false,       
+                    InLiquid = false,
+                    RainExtinguish = false,
+                    OnCraftedFueled = false,
                     Capacity = 300f
                 }
             },
             {
                 "awearablelight:clothes-head-candle*",
                 new FuelProps
-                {
-                    UseFuel = true,
+                {           
                     PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = true,
+                    OnCraftedFueled = true,
+                    Capacity = 24f,
                     FuelList = new()
                     {
                         { "game:candle", 8f }
-                    },
-                    Capacity = 24f
+                    }
                 }
             },
             {
                 "awearablelight:clothes-head-oil-lamp-*",
                 new FuelProps
                 {
-                    UseFuel = true,
                     PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = true,
+                    OnCraftedFueled = true,
+                    Capacity = 30f,
                     FuelList = new()
                     {
                         { "game:fat-rendered", 9f },
                         { "game:fat", 4f }
-                    },
-                    Capacity = 30f
+                    }
                 }
             },
             {
                 "awearablelight:clothes-waist-heavy-belt-brass-lantern-*",
                 new FuelProps
                 {
-                    UseFuel = true,
                     PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = false,
+                    OnCraftedFueled = true,
+                    Capacity = 64f,
                     FuelList = new()
                     {
                         { "game:candle", 8f }
-                    },
-                    Capacity = 64f
+                    }
+                }
+            },
+            {
+                "awearablelight:clothes-waist-heavy-belt-tinbronze-lantern-*",
+                new FuelProps
+                {
+                    PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = false,
+                    OnCraftedFueled = true,
+                    Capacity = 64f,
+                    FuelList = new()
+                    {
+                        { "game:candle", 8f }
+                    }
+                }
+            },
+            {
+                "awearablelight:clothes-waist-heavy-belt-blackbronze-lantern-*",
+                new FuelProps
+                {
+                    PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = false,
+                    OnCraftedFueled = true,
+                    Capacity = 64f,
+                    FuelList = new()
+                    {
+                        { "game:candle", 8f }
+                    }
+                }
+            },
+            {
+                "awearablelight:clothes-waist-heavy-belt-iron-lantern-*",
+                new FuelProps
+                {
+                    PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = false,
+                    OnCraftedFueled = true,
+                    Capacity = 64f,
+                    FuelList = new()
+                    {
+                        { "game:candle", 8f }
+                    }
+                }
+            },
+            {
+                "awearablelight:clothes-waist-heavy-belt-copper-lantern-*",
+                new FuelProps
+                {
+                    PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = false,
+                    OnCraftedFueled = true,
+                    Capacity = 64f,
+                    FuelList = new()
+                    {
+                        { "game:candle", 8f }
+                    }
+                }
+            },
+            {
+                "awearablelight:clothes-waist-heavy-belt-gold-lantern-*",
+                new FuelProps
+                {
+                    PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = false,
+                    OnCraftedFueled = true,
+                    Capacity = 64f,
+                    FuelList = new()
+                    {
+                        { "game:candle", 8f }
+                    }
+                }
+            },
+            {
+                "awearablelight:clothes-waist-heavy-belt-bismuthbronze-lantern-*",
+                new FuelProps
+                {
+                    PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = false,
+                    OnCraftedFueled = true,
+                    Capacity = 64f,
+                    FuelList = new()
+                    {
+                        { "game:candle", 8f }
+                    }
+                }
+            },
+            {
+                "awearablelight:clothes-waist-heavy-belt-silver-lantern-*",
+                new FuelProps
+                {
+                    PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = false,
+                    OnCraftedFueled = true,
+                    Capacity = 64f,
+                    FuelList = new()
+                    {
+                        { "game:candle", 8f }
+                    }
                 }
             }
         };

@@ -6,10 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.GameContent;
 
 namespace AWearableLight.Network
 {
@@ -32,12 +29,18 @@ namespace AWearableLight.Network
         public bool UseFuel;
 
         [ProtoMember(3)]
-        public string PowerType = "fuel";
+        public bool RainExtinguish;
 
         [ProtoMember(4)]
-        public float Capacity;
+        public bool InLiquid = true;
 
         [ProtoMember(5)]
+        public string PowerType = "fuel";
+
+        [ProtoMember(6)]
+        public float Capacity;
+
+        [ProtoMember(7)]
         public Dictionary<string, float> FuelList = new();
     }
 
@@ -136,6 +139,8 @@ namespace AWearableLight.Network
                 {
                     Code = entry.Key,
                     UseFuel = entry.Value.UseFuel,
+                    InLiquid = entry.Value.InLiquid,
+                    RainExtinguish = entry.Value.RainExtinguish,
                     PowerType = entry.Value.PowerType,
                     Capacity = entry.Value.Capacity,
                     FuelList = entry.Value.FuelList

@@ -1,5 +1,4 @@
 ﻿using AWearableLight.Config;
-using ProperVersion;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
@@ -10,8 +9,14 @@ namespace AWearableLight.Util
     {
         private static Server config;
 
+        public static int oldVersion = 1;
+
+        public const int newVersion = 2;
+
         public static void Init(Server cfg)
         {
+            _ = config;
+
             config = cfg;
         }
 
@@ -29,7 +34,7 @@ namespace AWearableLight.Util
                 }
             }
 
-            return new FuelProps();
+            return null;
         }
 
         public static bool NeedFuel(AssetLocation code)
@@ -45,6 +50,8 @@ namespace AWearableLight.Util
 
             // Example: ensure FuelTypes exists
             config.ItemTypes ??= new();
+
+            config.Version = newVersion;
 
             api.StoreModConfig(config, "awearablelight-server.json");
 

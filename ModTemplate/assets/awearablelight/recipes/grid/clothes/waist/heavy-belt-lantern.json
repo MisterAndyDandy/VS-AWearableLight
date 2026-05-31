@@ -1,0 +1,282 @@
+[
+  {
+  "name": "heavy-belt-blackbronze-lantern",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:lantern-large-up",
+      "attributes": {
+        "material": "blackbronze",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "tags": ["blackbronze"],
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:clothes-waist-sturdy-belt",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 1 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-waist-heavy-belt-blackbronze-lantern-off"
+  }
+},
+{
+  "name": "heavy-belt-brass-lantern",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:lantern-large-up",
+      "attributes": {
+        "material": "brass",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "tags": ["brass"],
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:clothes-waist-sturdy-belt",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 1 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-waist-heavy-belt-brass-lantern-off"
+  }
+},
+{
+  "name": "heavy-belt-tinbronze-lantern",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:lantern-large-up",
+      "attributes": {
+        "material": "tinbronze",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "tags": ["tinbronze"],
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:clothes-waist-sturdy-belt",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 1 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-waist-heavy-belt-tinbronze-lantern-off"
+  }
+},
+{
+  "name": "heavy-belt-iron-lantern",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:lantern-large-up",
+      "attributes": {
+        "material": "iron",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "tags": ["iron"],
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:clothes-waist-sturdy-belt",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 1 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-waist-heavy-belt-iron-lantern-off"
+  }
+},
+{
+  "name": "heavy-belt-copper-lantern",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:lantern-large-up",
+      "attributes": {
+        "material": "copper",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "tags": ["copper"],
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:clothes-waist-sturdy-belt",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 1 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-waist-heavy-belt-copper-lantern-off"
+  }
+},
+{
+  "name": "heavy-belt-gold-lantern",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:lantern-large-up",
+      "attributes": {
+        "material": "gold",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "tags": ["gold"],
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:clothes-waist-sturdy-belt",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 1 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-waist-heavy-belt-gold-lantern-off"
+  }
+},
+{
+  "name": "heavy-belt-silver-lantern",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:lantern-large-up",
+      "attributes": {
+        "material": "silver",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "tags": ["silver"],
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:clothes-waist-sturdy-belt",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 1 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-waist-heavy-belt-silver-lantern-off"
+  }
+},
+{
+  "name": "heavy-belt-bismuthbronze-lantern",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "block",
+      "code": "game:lantern-large-up",
+      "attributes": {
+        "material": "bismuthbronze",
+        "lining": "plain",
+        "glass": "quartz"
+      },
+      "tags": ["bismuthbronze"],
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:clothes-waist-sturdy-belt",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 1 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "clothes-waist-heavy-belt-bismuthbronze-lantern-off"
+  }
+}
+]

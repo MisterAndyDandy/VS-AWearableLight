@@ -2,23 +2,15 @@
 using AWearableLight.Interfaces;
 using AWearableLight.Network;
 using AWearableLight.Util;
-using ProtoBuf;
+using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
 namespace AWearableLight
 {
     #nullable enable
-
-    [ProtoContract]
-    public sealed class AWearableLightPacket
-    {
-        [ProtoMember(1)]
-        public int ItemSlot { get; set; }
-    }
 
     public class AWearableLightCore : ModSystem
     {
@@ -32,11 +24,9 @@ namespace AWearableLight
 
         private double lastServerTotalHours;
 
-        public long OnLongRefreshTick {  get; set; } = 0;
-
-        public long OnLongParticleTick { get; set; } = 0;
-
-        private long OnLongServerTick { get; set; } = 0;
+        public long OnLongRefreshTick {  get; set; }
+        public long OnLongServerFuelTick { get; set; }
+        public long OnLongServerTick { get; set; }
 
         private ICoreServerAPI? Sapi { get; set; }
 
@@ -58,6 +48,11 @@ namespace AWearableLight
             {
                 ServerConfig = new LoadOrCreate().SapiConfig(api, ConfigServerName);
                 WearableLightConfigHelper.Init(ServerConfig);
+
+                if(WearableLightConfigHelper.oldVersion >= ServerConfig.Version)
+                {
+                    WearableLightConfigHelper.MigrateConfig(api);
+                }
             }
 
             ConfigSync = new ConfigSyncSystem(
@@ -86,12 +81,25 @@ namespace AWearableLight
             api.Input.RegisterHotKey("toggleLight", Lang.Get("awearablelight:keybind-activeslot-description"), GlKeys.L);
             api.Input.SetHotKeyHandler("toggleLight", _ => OnToggleLightHotkey(api.World.Player));
 
-            api.Input.RegisterHotKey("toggleHoveredGearLight", Lang.Get("awearablelight:keybind-gearslot-description"), GlKeys.L, HotkeyType.CharacterControls, false, true, false);
+            api.Input.RegisterHotKey("toggleHoveredGearLight", Lang.Get("awearablelight:keybind-gearslot-description"), GlKeys.L, HotkeyType.GUIOrOtherControls, false, true, false);
             api.Input.SetHotKeyHandler("toggleHoveredGearLight", _ => OnToggleHoveredGearLightHotkey(api.World.Player));
 
             api.Event.PlayerJoin += ErrorMessage;
 
-            new ParticleSystemCore(api).StartParticle();
+            //foreach (var recipe in api.World.GridRecipes)
+            //{
+            //    if (recipe?.Output?.ResolvedItemStack?.Collectible?.GetCollectibleBehavior<CollectibleBehaviorAttachmentableLight>(true) != null) 
+            //    {
+            //        var ingredient = recipe?.ResolvedIngredients?[0];
+                    
+            //        if (ingredient == null) continue;
+
+            //        api.Logger.Warning(
+            //            $"{recipe?.Name} => {ingredient.Tags}", ingredient.Tags.IsEmpty == true
+            //        );
+            //    }
+            //}
+
         }
 
         private void ErrorMessage(IClientPlayer byPlayer)
@@ -124,64 +132,122 @@ namespace AWearableLight
                 ConfigSync?.SendToPlayer(player);
             };
 
-            OnLongServerTick = api.Event.RegisterGameTickListener(OnServerTick, 1000, 200);
+            OnLongServerFuelTick = api.Event.RegisterGameTickListener(OnServerFuelTick, 2000);
+            OnLongServerTick = api.Event.RegisterGameTickListener(OnServerTick, 100);
 
         }
 
-        public override void Dispose()
+        private void OnServerTick(float obj)
         {
-            base.Dispose();
+            if (Sapi == null) return;
 
-            Sapi?.Event.UnregisterGameTickListener(OnLongServerTick);
-            Sapi?.Event.UnregisterGameTickListener(OnLongRefreshTick);
-            Capi?.Event.UnregisterGameTickListener(OnLongParticleTick);
+            foreach (IServerPlayer player in Sapi.World.AllOnlinePlayers)
+            {
+                if (player?.Entity == null) continue;
 
-            ConfigSync = null;
-            ServerConfig = null;
-            ClientConfig = null;
+                var invGear =
+                    player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
+
+                if (invGear == null) continue;
+
+                foreach (ItemSlot slot in invGear)
+                {
+                    if (slot == null || slot.Empty) continue;
+
+                    var item = slot.Itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorAttachmentableLight>(true);
+
+                    if (item == null) continue;
+
+                    var prop = WearableLightConfigHelper.GetProps(item.collObj.Code);
+
+                    if(prop.InLiquid || prop.RainExtinguish) continue;
+
+                    if (!WearableLightConfigHelper.NeedFuel(
+                        slot.Itemstack.Collectible.Code))
+                    {
+                        continue;
+                    }
+
+                    var dresstype = slot.Itemstack.Collectible.GetCollectibleBehavior<CollectibleBehaviorWearable>(true)?.GetDressType(slot);
+
+                    if (item.InLiquid(player.Entity, slot.Itemstack, dresstype) || item.GetWeather(player.Entity, slot.Itemstack))
+                    {
+                        ToggleWearableItem(player, new AWearableLightPacket() { ItemSlot = invGear.GetSlotId(slot) });
+                    }
+                }
+            }
         }
 
-        private void OnServerTick(float dt)
+        private void OnServerFuelTick(float dt)
         {
             if (Sapi == null) return;
 
             double totalHours = Sapi.World.Calendar.TotalHours;
             double hoursPassed = totalHours - lastServerTotalHours;
 
-            foreach (IPlayer? player in Sapi.World.AllOnlinePlayers)
+            hoursPassed = Math.Min(hoursPassed, 0.5);
+
+            if (hoursPassed <= 0)
             {
-                if (player.Entity == null) continue;
+                lastServerTotalHours = totalHours;
+                return;
+            }
 
-                IInventory? inventory = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
-
-                if (inventory == null) continue;
-
-                foreach (ItemSlot slot in inventory)
+            foreach (IServerPlayer player in Sapi.World.AllOnlinePlayers)
+            {
+                if (player != null)
                 {
-                    if (slot == null || slot.Empty) continue;
+                    var invGear =
+                    player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
 
-                    // Skip non-fuel items
-                    if (!WearableLightConfigHelper.NeedFuel(slot.Itemstack.Collectible.Code))
+                    if (invGear == null) continue;
+
+                    foreach (ItemSlot slot in invGear)
                     {
-                        continue;
+                        if (slot == null || slot.Empty) continue;
+
+                        var source = slot.Itemstack.Collectible.GetCollectibleInterface<IPowerSource>();
+
+                        if (source == null) continue;
+
+                        if (!WearableLightConfigHelper.NeedFuel(
+                            slot.Itemstack.Collectible.Code))
+                        {
+                            continue;
+                        }
+
+                        source.ConsumePower(
+                            slot,
+                            player.Entity,
+                            hoursPassed
+                        );
+
+                        slot.MarkDirty();
                     }
-
-                    slot.Itemstack.Collectible.GetCollectibleInterface<IPowerSource>()?.ConsumePower(slot, player.Entity, hoursPassed);
-
-                    slot.MarkDirty();
                 }
             }
 
             lastServerTotalHours = totalHours;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Sapi?.Event.UnregisterGameTickListener(OnLongServerFuelTick);
+            Sapi?.Event.UnregisterGameTickListener(OnLongRefreshTick);
+            Sapi?.Event.UnregisterGameTickListener(OnLongServerTick);
+
+            ConfigSync = null;
+            ServerConfig = null;
+            ClientConfig = null;
+        }
+
         private bool ToggleWearableItem(IPlayer player, int itemslot = -1)
         {
             if (player == null) return false;
 
-            InventoryBase? invGear = player.Entity
-                .GetBehavior<EntityBehaviorPlayerInventory>()?
-                .Inventory;
+            var invGear = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
 
             ItemSlot? currentSlot = player.InventoryManager.ActiveHotbarSlot;
 
@@ -199,14 +265,9 @@ namespace AWearableLight
 
             if (attachmentableLight == null) return false;
 
-            bool newState =
-             !attachmentableLight.LightState(currentSlot.Itemstack);
+            var newState =! attachmentableLight.LightState(currentSlot.Itemstack);
 
-            attachmentableLight.SetLightActive(
-                currentSlot,
-                newState,
-                player.Entity
-            );
+            attachmentableLight.SetLightActive(currentSlot, newState, player.Entity);
 
             currentSlot.MarkDirty();
 
@@ -238,9 +299,7 @@ namespace AWearableLight
 
         private bool OnToggleHoveredGearLightHotkey(IPlayer player)
         {
-            InventoryBase? invGear = player.Entity
-                .GetBehavior<EntityBehaviorPlayerInventory>()?
-                .Inventory;
+            var invGear = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName);
 
             ItemSlot? hoveredSlot = player.InventoryManager.CurrentHoveredSlot;
             int itemslot = invGear?.GetSlotId(hoveredSlot) ?? -1;

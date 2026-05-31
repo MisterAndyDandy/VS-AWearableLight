@@ -1,5 +1,4 @@
-﻿using AWearableLight.Config;
-using Vintagestory.API.Common;
+﻿using Vintagestory.API.Common;
 
 namespace AWearableLight.Config
 {
@@ -20,6 +19,7 @@ namespace AWearableLight.Config
                 api.Logger?.VerboseDebug($"Loaded config '{ConfigServerName}'.");
             }
 
+           
             return serverConfig;
         }
 

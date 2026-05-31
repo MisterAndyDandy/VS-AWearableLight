@@ -16,31 +16,55 @@ namespace AWearableLight
     {
 
         #nullable enable
-        private ICoreAPI? Api { get; set; }
+        private ICoreAPI? api { get; set; }
 
-        public float FuelCapacity = 24f;
+        public float fuelCapacity = 24f;
+
+        public FuelProps? fuelProps => WearableLightConfigHelper.GetProps(collObj.Code);
 
         public CollectibleBehaviorFuel(CollectibleObject collObj) : base(collObj) { }
 
         public override void OnLoaded(ICoreAPI api)
         {
-            Api = api;
+            this.api = api;
 
-            FuelProps lightProps = WearableLightConfigHelper.GetProps(collObj.Code);
+            if (fuelProps == null) return;
 
-            FuelCapacity = lightProps.Capacity > 0 ? lightProps.Capacity : FuelCapacity;
+            fuelCapacity = fuelProps?.Capacity > 0 ? fuelProps.Capacity : fuelCapacity;
+
+            _ = collObj.Attributes;
 
             base.OnLoaded(api);
         }
 
+        private void SetFuelOnCrafted(ItemSlot slot)
+        {
+            if (slot.Empty) return;
+
+            if (fuelProps?.OnCraftedFueled ?? false)
+            {
+                SetPower(slot.Itemstack, GetHighestFuel());
+            }
+        }
+
+        public float GetHighestFuel()
+        {
+            return fuelProps?.FuelList.Count > 0
+                                    ? fuelProps.FuelList.Max(x => x.Value)
+                                    : 0f;
+        }
+
         public override void OnCreatedByCrafting(ItemSlot[] allInputSlots, ItemSlot outputSlot, IRecipeBase byRecipe, ref EnumHandling bhHandling)
         {
-            if (outputSlot?.Itemstack != null)
-            {
-                SetPower(outputSlot.Itemstack, 8);
-            }
-
             base.OnCreatedByCrafting(allInputSlots, outputSlot, byRecipe, ref bhHandling);
+
+            if (!(outputSlot is DummySlot))
+            {
+                if (fuelProps?.OnCraftedFueled ?? false)
+                {
+                    SetFuelOnCrafted(outputSlot);
+                }
+            }
         }
 
         public override int GetMergableQuantity(ItemStack sinkStack, ItemStack sourceStack, EnumMergePriority priority, ref EnumHandling handling)
@@ -63,7 +87,7 @@ namespace AWearableLight
 
                 handling = EnumHandling.PreventDefault;
 
-                if (fuelHours >= FuelCapacity)
+                if (fuelHours >= fuelCapacity)
                 {
                     return 0;
                 }
@@ -113,11 +137,11 @@ namespace AWearableLight
 
             double fuelHours = GetPower(sinkStack);
 
-            if (fuelHours >= FuelCapacity)
+            if (fuelHours >= fuelCapacity)
             {
-                if (Api?.Side == EnumAppSide.Client)
+                if (api?.Side == EnumAppSide.Client)
                 {
-                    (Api as ICoreClientAPI)?.TriggerIngameError(
+                    (api as ICoreClientAPI)?.TriggerIngameError(
                         this,
                         "lightfull",
                         Lang.Get(
@@ -154,9 +178,17 @@ namespace AWearableLight
             }
 
             var fuel = GetPower(itemStack).ToString("0.0");
-            var capfuel = FuelCapacity.ToString("0.0");
+            var capfuel = fuelCapacity.ToString("0.0");
+
 
             dsc.AppendLine();
+            dsc.AppendLine();
+
+            if (fuelProps?.OnCraftedFueled ?? false)
+            {
+                dsc.AppendLine(Lang.Get("awearablelight:on-crafted-fuel", GetHighestFuel(), capfuel));
+        
+            }
             dsc.AppendLine(Lang.Get("awearablelight:fuel-hours", fuel, capfuel));
 
         }
@@ -180,25 +212,35 @@ namespace AWearableLight
 
                 var asset = new AssetLocation(fuel);
 
-                // Exact match item
-                var item = Api?.World.GetItem(asset);
+                // Item
+
+                var item = api?.World.GetItem(asset);
 
                 if (item != null)
                 {
-                    fuelStacks.Add(new ItemStack(item));
-                    continue;
+                    fuelStacks.AddIfNotPresent(new ItemStack(item));
                 }
 
                 // Wildcard match
-                var matches = Api?.World.SearchItems(asset);
+                var matches = api?.World.SearchItems(asset);
 
                 if (matches != null)
                 {
                     foreach (var match in matches)
                     {
-                        fuelStacks.Add(new ItemStack(match));
+                        fuelStacks.AddIfNotPresent(new ItemStack(match));
                     }
                 }
+
+                // Block
+                //var block = api?.World.GetBlock(asset);
+
+                //if (block != null)
+                //{
+                //    fuelStacks.AddIfNotPresent(new ItemStack(block));
+                //}
+
+
             }
 
             if (fuelStacks.Count == 0)
@@ -241,6 +283,7 @@ namespace AWearableLight
             return 0f;
         }
 
+  
         public virtual double GetPower(ItemStack sourceStack)
         {
             return sourceStack.Attributes.GetDouble("fuelHours", 0);
@@ -248,12 +291,14 @@ namespace AWearableLight
 
         public virtual void SetPower(ItemStack sourceStack, double amount)
         {
-            sourceStack.Attributes.SetDouble("fuelHours", GameMath.Clamp(amount, 0, FuelCapacity));
+            if(sourceStack == null) return;
+
+            sourceStack.Attributes.SetDouble("fuelHours", GameMath.Clamp(amount, 0, fuelCapacity));
         }
 
         public virtual void ConsumePower(ItemSlot slot, EntityPlayer entityPlayer, double amount)
         {
-            if (slot?.Itemstack?.Attributes == null) return;
+            if (slot.Empty) return;
 
             var attachmentableLight =
                 slot.Itemstack.Collectible
@@ -281,8 +326,6 @@ namespace AWearableLight
                     entityPlayer
                 );
             }
-
-            slot.MarkDirty();
         }
 
         public virtual void AddPower(ItemStack sourceStack, ItemStack sinkStack, double amount)
@@ -299,7 +342,7 @@ namespace AWearableLight
 
         public virtual bool IsFull(ItemStack sourceStack)
         {
-            return GetPower(sourceStack) >= FuelCapacity;
+            return GetPower(sourceStack) >= fuelCapacity;
         }
     }
 }

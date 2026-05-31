@@ -1,5 +1,4 @@
-﻿using AWearableLight.Config;
-using AWearableLight.Interfaces;
+﻿using AWearableLight.Interfaces;
 using AWearableLight.Util;
 using System.Linq;
 using Vintagestory.API.Client;
@@ -13,75 +12,16 @@ using Vintagestory.GameContent;
 namespace AWearableLight
 {
 
-#nullable enable
-
-    public class AttachmentableLightProp
-    {
-        public string soundPath { get; set; } = string.Empty;
-
-        public float warmthBouse { get; set; } = 0f;
-
-        public ParticleProp? particleProp { get; set; }
-
-        //public RelaxedReadOnlyDictionary<string, ParticleProp>? particleProps { get; set; }
-
-        public static AttachmentableLightProp? ReadFrom(ItemStack itemStack)
-        {
-            if(itemStack == null) return null;
-
-            AttachmentableLightProp? attachmentableLightStats = itemStack.Collectible.Attributes?["attachmentableLightProp"]?.AsObject<AttachmentableLightProp>();
-
-            if (attachmentableLightStats == null)
-            {
-                return null;
-            }
-
-            return attachmentableLightStats;
-        }
-
-        public static AttachmentableLightProp? ReadFrom(CollectibleObject colObj)
-        {
-            if(colObj == null)
-            {
-                return null;
-            }
-
-            AttachmentableLightProp? attachmentableLightProp = colObj.Attributes?["attachmentableLightProp"]?.AsObject<AttachmentableLightProp>();
-
-            if (attachmentableLightProp == null)
-            {
-                return null;
-            }
-
-            return attachmentableLightProp; 
-        }
-
-
-        public class ParticleProp 
-        {
-            public string Colour { get; set; } = string.Empty;
-
-            public Vec3d AttachmentPoint { get; set; } = new Vec3d();
-
-        }
-    }
-
+    #nullable enable
 
     class CollectibleBehaviorAttachmentableLight : CollectibleBehavior
     {
-        private IPowerSource? powerType => collObj.GetCollectibleInterface<IPowerSource>();
-
+        
         private ICoreAPI? api { get; set; }
 
-        private Client? ClientConfig { get; set; }
+        public WeatherSystemBase? WeatherSystemBase { get; set; }
 
         public AttachmentableLightProp? attachmentableLightProp => AttachmentableLightProp.ReadFrom(this.collObj);
-
-        public AdvancedParticleProperties? advancedParticle 
-        {
-            get; 
-            set;
-        } = new AdvancedParticleProperties();
 
         public CollectibleBehaviorAttachmentableLight(CollectibleObject collObj) : base(collObj)
         {
@@ -91,15 +31,8 @@ namespace AWearableLight
         {
             this.api = api;
 
-            if (api.Side == EnumAppSide.Client)
-            {
-                ClientConfig = new LoadOrCreate().CapiConfig(api, "awearablelight-client.json");
-            }
-
-            advancedParticle?.Init(api);
-
-            _ = collObj.ParticleProperties;
-
+            WeatherSystemBase = api.ModLoader.GetModSystem<WeatherSystemBase>();
+           
             base.OnLoaded(api);
         }
 
@@ -108,13 +41,13 @@ namespace AWearableLight
             return stack.Attributes.GetBool("togglelight");
         }
 
-        public void SetLightActive(ItemSlot slot, bool active, EntityPlayer? player = null)
+        public virtual void SetLightActive(ItemSlot slot, bool active, EntityPlayer player)
         {
             if (slot == null || slot.Empty || api == null) return;
 
             ItemStack stack = slot.Itemstack;
 
-            bool hasFuel = powerType?.HasPower(stack) ?? false;
+            bool hasFuel = collObj.GetCollectibleInterface<IPowerSource>()?.HasPower(stack) ?? false;
 
             // Only block activation if no fuel
             if (active && !hasFuel && WearableLightConfigHelper.NeedFuel(stack.Collectible.Code))
@@ -135,11 +68,8 @@ namespace AWearableLight
                 return;
             }
 
-            // Already in correct state
-            if (LightState(stack) == active) return;
-
             // Play toggle sound
-            bool value = ClientConfig?.EnableSounds ?? true;
+            bool value = AWearableLightCore.ClientConfig?.EnableSounds ?? false;
 
             if (value && player != null)
             {
@@ -181,6 +111,101 @@ namespace AWearableLight
             }
 
             slot.MarkDirty();
+        }
+
+        public virtual bool GetWeather(EntityAgent entity, ItemStack itemStack)
+        {
+            if (api == null) return false;
+
+            if (WeatherSystemBase == null) return false;
+
+            if (!LightState(itemStack)) return false;
+
+            var pos = entity.Pos;
+
+            float rain = WeatherSystemBase.GetPrecipitation(pos.XYZ);
+
+            bool exposedToRain = api.World.BlockAccessor.GetRainMapHeightAt(pos.AsBlockPos.X, pos.AsBlockPos.Z) <= entity.Pos.Y;
+
+            if (!exposedToRain || rain <= 0.4f)
+            {
+                return false;
+            }
+
+           double chance = GameMath.Clamp(attachmentableLightProp?.chanceExtinguish ?? 0, 0, 100 / 100f);
+
+           return api.World.Rand.NextDouble() <= chance;
+        }
+
+        public virtual bool InLiquid(EntityAgent entity, ItemStack itemStack, EnumCharacterDressType? dressType)
+        {
+            if (api == null)
+            {
+                return false;
+            }
+
+            if (!LightState(itemStack))
+            {
+                return false;
+            }
+
+            // Swimming always extinguishes
+            if (entity.Swimming)
+            {
+                return true;
+            }
+
+            var attachmentableLight =
+                attachmentableLightProp;
+
+            float offsetY =
+                attachmentableLight?.extinguishOffsetY ?? 0f;
+
+            // =====================================================
+            // WATER BLOCK
+            // =====================================================
+
+            Block fluidBlock = api.World.BlockAccessor.GetBlock(entity.Pos.AsBlockPos, BlockLayersAccess.Fluid);
+
+            if (fluidBlock == null)
+            {
+                return false;
+            }
+
+            int liquidLevel =
+                fluidBlock.LiquidLevel;
+
+            if (liquidLevel <= 0)
+            {
+                return false;
+            }
+
+            // =====================================================
+            // ENTITY HEIGHT CHECK
+            // =====================================================
+
+            float entityHeight = entity.SelectionBox.YSize;
+
+            // Deep enough to cover small entity
+            if (liquidLevel >= entityHeight * 7f)
+            {
+                return true;
+            }
+
+            // =====================================================
+            // HEAD ITEMS SURVIVE SHALLOW WATER
+            // =====================================================
+
+            if (dressType == EnumCharacterDressType.Head && liquidLevel < 7)
+            {
+                return false;
+            }
+
+            // =====================================================
+            // WEARABLE CHECK
+            // =====================================================
+
+            return liquidLevel >= offsetY;
         }
 
         public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)
