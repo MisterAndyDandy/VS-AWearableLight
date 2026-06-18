@@ -5,7 +5,8 @@
     "description": "This mod lets you use a wearable light.",
     "authors": [ "Mister Andy Dandy" ],
     "Contributors": [ "Ruddi", "o0darkill0o", "Apache", "Craluminum" ],
-    "version": "1.2.0",
+    "version": "1.2.3-pre.2",
     "dependencies": {
+        "game": "1.22.0"
     }
 }

@@ -70,11 +70,11 @@ namespace AWearableLight.Util
 
             if (match)
             {
-                foreach (var log in logs)
+                foreach (var text in logs)
                 {
-                    if (string.IsNullOrEmpty(log)) continue;
+                    if (string.IsNullOrEmpty(text)) continue;
 
-                    capi.Logger.Debug(log);
+                    capi.Logger.Debug(text);
 
                 }
             }

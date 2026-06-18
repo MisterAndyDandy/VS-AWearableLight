@@ -2,6 +2,12 @@
 	"code": "awearablelight:backpack",
 	"enabled": false,
 	"maxstacksize": 1,
+	"variantgroups": [
+		{
+			"code": "type",
+			"states": [ "on", "off" ]
+		}
+	],
 	"behaviors": [
 		{
 			"name": "GroundStorable",
@@ -22,26 +28,42 @@
 	"attributes": {
 		"attachableToEntity": {
 			"categoryCode": "backpack",
-			"attachedShape": { "base": "awearablelight:item/bag/backpack-attached-lantern" }
+			"attachedShape": { "base": "awearablelight:item/bag/{type}" }
 		},
 		"wearableAttachment": true,
 		"backpack": {
 			"quantitySlots": 6
 		}
 	},
-	"shape": { "base": "awearablelight:item/bag/backpack-lantern" },
-	"textures": {
-		"straps": { "base": "game:item/bag/backpack/straps" },
-		"leather": { "base": "game:item/bag/backpack/leather" },
-		"lantern": { "base": "awearablelight:entity/humanoid/seraphclothes/waist/heavy-belt" }
-
+	"shapeByType": {
+		"*": {
+			"base": "awearablelight:item/bag/{type}" 
+		}
+	},
+	"attributesByType":{
+		"@.*-(on)": 
+		{		
+			"warmth": 0.25,
+			"attachmentableLightProp":
+			{
+					"soundPath": "game:sounds/effect/extinguish",
+					"extinguishOffsetY": 4
+			}
+		}
+	},
+	"texturesByType": {
+		"@.*-(off|on)": {
+			"straps": { "base": "game:item/bag/backpack/straps" },
+			"leather": { "base": "game:item/bag/backpack/leather" },
+			"lantern": { "base": "awearablelight:entity/humanoid/seraphclothes/waist/heavy-belt" 
+		}
 	},
 	"lightHsv": [ 4, 2, 9 ],
 	"storageFlags": 2,
 	"creativeinventory": {
-		"general": [ "*" ],
-		"items": [ "*" ],
-		"awearablelight": [ "*" ]
+		"general": [ "@.*-(off)" ],
+		"items": [ "@.*-(off)"  ],
+		"awearablelight": [ "@.*-(off)" ]
 	},
 	"guiTransform": {
 		"translation": {

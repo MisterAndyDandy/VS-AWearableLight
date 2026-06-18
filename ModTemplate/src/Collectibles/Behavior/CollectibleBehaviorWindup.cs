@@ -89,7 +89,7 @@ namespace AWearableLight
             SetPower(sourceStack, GetPower(sourceStack) + amount);
         }
 
-        public void ConsumePower(ItemSlot sourceSlot, EntityPlayer entityPlayer,  double amount)
+        public void ConsumePower(ItemSlot sourceSlot, IPlayer player,  double amount)
         { 
             SetPower(sourceSlot.Itemstack, GetPower(sourceSlot.Itemstack) - amount); 
         }

@@ -18,8 +18,7 @@ namespace AWearableLight.Config
             {
                 api.Logger?.VerboseDebug($"Loaded config '{ConfigServerName}'.");
             }
-
-           
+   
             return serverConfig;
         }
 

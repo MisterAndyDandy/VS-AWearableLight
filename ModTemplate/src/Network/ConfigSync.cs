@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
 namespace AWearableLight.Network
@@ -26,21 +27,27 @@ namespace AWearableLight.Network
         public string Code = string.Empty;
 
         [ProtoMember(2)]
-        public bool UseFuel;
+        public string PowerType = string.Empty;
 
         [ProtoMember(3)]
         public bool RainExtinguish;
 
         [ProtoMember(4)]
-        public bool InLiquid = true;
+        public bool InLiquid;
 
         [ProtoMember(5)]
-        public string PowerType = "fuel";
+        public bool UseFuel;
 
         [ProtoMember(6)]
-        public float Capacity;
+        public bool OnCraftedFueled;
 
         [ProtoMember(7)]
+        public float Capacity;
+
+        [ProtoMember(8)]
+        public int[]? LightHsv;
+
+        [ProtoMember(9)]
         public Dictionary<string, float> FuelList = new();
     }
 
@@ -83,11 +90,10 @@ namespace AWearableLight.Network
                     .RegisterMessageType<ServerConfigPacket>()
                     .SetMessageHandler<ServerConfigPacket>(OnConfigPacketReceived);
             }
-
-           api.ModLoader.GetModSystem<AWearableLightCore>().OnLongRefreshTick = api.Event.RegisterGameTickListener(CheckConfigChanges, 100000); // every 1 mins
+            
         }
 
-        protected void CheckConfigChanges(float dt)
+        public void CheckConfigChanges(float dt)
         {
             if (!File.Exists(configPath)) return;
 
@@ -123,7 +129,6 @@ namespace AWearableLight.Network
                 }
             }
 
-
             api.Logger.Debug("[AWearableLight] Config reloaded");
         }
 
@@ -138,11 +143,13 @@ namespace AWearableLight.Network
                 packet.ItemTypes.Add(new ItemTypePacket
                 {
                     Code = entry.Key,
+                    PowerType = entry.Value.PowerType,
+                    OnCraftedFueled = entry.Value.OnCraftedFueled,
                     UseFuel = entry.Value.UseFuel,
                     InLiquid = entry.Value.InLiquid,
                     RainExtinguish = entry.Value.RainExtinguish,
-                    PowerType = entry.Value.PowerType,
                     Capacity = entry.Value.Capacity,
+                    LightHsv = entry.Value.LightHsv,
                     FuelList = entry.Value.FuelList
                 });
             }
@@ -165,10 +172,14 @@ namespace AWearableLight.Network
             {
                 config.ItemTypes[entry.Code] = new FuelProps
                 {
-                    UseFuel = entry.UseFuel,
                     PowerType = entry.PowerType,
+                    OnCraftedFueled = entry.OnCraftedFueled,
+                    UseFuel = entry.UseFuel,
+                    InLiquid = entry.InLiquid,
+                    RainExtinguish = entry.RainExtinguish,
                     Capacity = entry.Capacity,
-                    FuelList = entry.FuelList ?? new()
+                    LightHsv = entry.LightHsv,
+                    FuelList = entry.FuelList
                 };
             }
 

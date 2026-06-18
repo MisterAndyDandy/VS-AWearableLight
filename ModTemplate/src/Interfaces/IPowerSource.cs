@@ -17,7 +17,7 @@ namespace AWearableLight.Interfaces
 
         void AddPower(ItemStack sourceStack, ItemStack sinkStack, double amount);
 
-        void ConsumePower(ItemSlot sourceslot, EntityPlayer entityPlayer, double amount);
+        void ConsumePower(ItemSlot sourceslot, IPlayer player, double amount);
     }
 
 }

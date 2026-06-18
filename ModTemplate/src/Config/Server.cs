@@ -19,11 +19,12 @@ namespace AWearableLight.Config
                     InLiquid = false,
                     RainExtinguish = false,
                     OnCraftedFueled = false,
+                    LightHsv = [10,5,12],
                     Capacity = 300f
                 }
             },
             {
-                "awearablelight:clothes-head-candle*",
+                "awearablelight:clothes-head-candle1-*",
                 new FuelProps
                 {           
                     PowerType = "fuel",
@@ -32,6 +33,24 @@ namespace AWearableLight.Config
                     RainExtinguish = true,
                     OnCraftedFueled = true,
                     Capacity = 24f,
+                    LightHsv = [9,3,4],
+                    FuelList = new()
+                    {
+                        { "game:candle", 8f }
+                    }
+                }
+            },
+            {
+                "awearablelight:clothes-head-candle2-*",
+                new FuelProps
+                {
+                    PowerType = "fuel",
+                    UseFuel = true,
+                    InLiquid = true,
+                    RainExtinguish = true,
+                    OnCraftedFueled = true,
+                    Capacity = 24f,
+                    LightHsv = [9,3,4],
                     FuelList = new()
                     {
                         { "game:candle", 8f }
@@ -48,6 +67,7 @@ namespace AWearableLight.Config
                     RainExtinguish = true,
                     OnCraftedFueled = true,
                     Capacity = 30f,
+                    LightHsv = [4,2,9],
                     FuelList = new()
                     {
                         { "game:fat-rendered", 9f },
@@ -56,7 +76,7 @@ namespace AWearableLight.Config
                 }
             },
             {
-                "awearablelight:clothes-waist-heavy-belt-brass-lantern-*",
+                "awearablelight:clothes-waist-sturdy-belt-brass-lantern-*",
                 new FuelProps
                 {
                     PowerType = "fuel",
@@ -65,6 +85,7 @@ namespace AWearableLight.Config
                     RainExtinguish = false,
                     OnCraftedFueled = true,
                     Capacity = 64f,
+                    LightHsv = [6,4,12],
                     FuelList = new()
                     {
                         { "game:candle", 8f }
@@ -72,7 +93,7 @@ namespace AWearableLight.Config
                 }
             },
             {
-                "awearablelight:clothes-waist-heavy-belt-tinbronze-lantern-*",
+                "awearablelight:clothes-waist-sturdy-belt-tinbronze-lantern-*",
                 new FuelProps
                 {
                     PowerType = "fuel",
@@ -81,6 +102,7 @@ namespace AWearableLight.Config
                     RainExtinguish = false,
                     OnCraftedFueled = true,
                     Capacity = 64f,
+                    LightHsv = [6,4,12],
                     FuelList = new()
                     {
                         { "game:candle", 8f }
@@ -88,7 +110,7 @@ namespace AWearableLight.Config
                 }
             },
             {
-                "awearablelight:clothes-waist-heavy-belt-blackbronze-lantern-*",
+                "awearablelight:clothes-waist-sturdy-belt-blackbronze-lantern-*",
                 new FuelProps
                 {
                     PowerType = "fuel",
@@ -97,6 +119,7 @@ namespace AWearableLight.Config
                     RainExtinguish = false,
                     OnCraftedFueled = true,
                     Capacity = 64f,
+                    LightHsv = [6,4,12],
                     FuelList = new()
                     {
                         { "game:candle", 8f }
@@ -104,7 +127,7 @@ namespace AWearableLight.Config
                 }
             },
             {
-                "awearablelight:clothes-waist-heavy-belt-iron-lantern-*",
+                "awearablelight:clothes-waist-sturdy-belt-iron-lantern-*",
                 new FuelProps
                 {
                     PowerType = "fuel",
@@ -113,6 +136,7 @@ namespace AWearableLight.Config
                     RainExtinguish = false,
                     OnCraftedFueled = true,
                     Capacity = 64f,
+                    LightHsv = [6,4,12],
                     FuelList = new()
                     {
                         { "game:candle", 8f }
@@ -120,7 +144,7 @@ namespace AWearableLight.Config
                 }
             },
             {
-                "awearablelight:clothes-waist-heavy-belt-copper-lantern-*",
+                "awearablelight:clothes-waist-sturdy-belt-copper-lantern-*",
                 new FuelProps
                 {
                     PowerType = "fuel",
@@ -129,6 +153,7 @@ namespace AWearableLight.Config
                     RainExtinguish = false,
                     OnCraftedFueled = true,
                     Capacity = 64f,
+                    LightHsv = [6,4,12],
                     FuelList = new()
                     {
                         { "game:candle", 8f }
@@ -136,7 +161,7 @@ namespace AWearableLight.Config
                 }
             },
             {
-                "awearablelight:clothes-waist-heavy-belt-gold-lantern-*",
+                "awearablelight:clothes-waist-sturdy-belt-gold-lantern-*",
                 new FuelProps
                 {
                     PowerType = "fuel",
@@ -145,6 +170,7 @@ namespace AWearableLight.Config
                     RainExtinguish = false,
                     OnCraftedFueled = true,
                     Capacity = 64f,
+                    LightHsv = [6,4,12],
                     FuelList = new()
                     {
                         { "game:candle", 8f }
@@ -152,7 +178,7 @@ namespace AWearableLight.Config
                 }
             },
             {
-                "awearablelight:clothes-waist-heavy-belt-bismuthbronze-lantern-*",
+                "awearablelight:clothes-waist-sturdy-belt-bismuthbronze-lantern-*",
                 new FuelProps
                 {
                     PowerType = "fuel",
@@ -161,6 +187,7 @@ namespace AWearableLight.Config
                     RainExtinguish = false,
                     OnCraftedFueled = true,
                     Capacity = 64f,
+                    LightHsv = [],
                     FuelList = new()
                     {
                         { "game:candle", 8f }
@@ -168,7 +195,7 @@ namespace AWearableLight.Config
                 }
             },
             {
-                "awearablelight:clothes-waist-heavy-belt-silver-lantern-*",
+                "awearablelight:clothes-waist-sturdy-belt-silver-lantern-*",
                 new FuelProps
                 {
                     PowerType = "fuel",
@@ -177,6 +204,7 @@ namespace AWearableLight.Config
                     RainExtinguish = false,
                     OnCraftedFueled = true,
                     Capacity = 64f,
+                    LightHsv = [6,4,12],
                     FuelList = new()
                     {
                         { "game:candle", 8f }

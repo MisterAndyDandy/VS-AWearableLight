@@ -1,0 +1,29 @@
+{
+  "name": "sturdy-belt",
+  "enabled": true,
+  "ingredientPattern": "B,K,P",
+  "recipeGroup": 1,
+  "ingredients": {
+    "B": {
+      "type": "item",
+      "code": "game:sewingkit",
+      "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:leather-normal-plain",
+      "quantity": 1
+    },
+    "P": { 
+      "type": "item", 
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 2 
+  }
+  },
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "game:clothes-waist-sturdy-belt"
+  }
+}

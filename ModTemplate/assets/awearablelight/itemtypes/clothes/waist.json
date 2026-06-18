@@ -8,22 +8,22 @@
 		{
 			"code": "waist",
 			"states": [
-				"heavy-belt-brass-lantern-off",
-				"heavy-belt-brass-lantern-on",
-				"heavy-belt-tinbronze-lantern-on",
-				"heavy-belt-tinbronze-lantern-off",
-				"heavy-belt-iron-lantern-on",
-				"heavy-belt-iron-lantern-off",
-				"heavy-belt-copper-lantern-on",
-				"heavy-belt-copper-lantern-off",
-				"heavy-belt-blackbronze-lantern-off",
-				"heavy-belt-blackbronze-lantern-on",
-				"heavy-belt-gold-lantern-on",
-				"heavy-belt-gold-lantern-off",
-				"heavy-belt-bismuthbronze-lantern-off",
-				"heavy-belt-bismuthbronze-lantern-on",
-				"heavy-belt-silver-lantern-off",
-				"heavy-belt-silver-lantern-on"
+				"sturdy-belt-brass-lantern-off",
+				"sturdy-belt-brass-lantern-on",
+				"sturdy-belt-tinbronze-lantern-on",
+				"sturdy-belt-tinbronze-lantern-off",
+				"sturdy-belt-iron-lantern-on",
+				"sturdy-belt-iron-lantern-off",
+				"sturdy-belt-copper-lantern-on",
+				"sturdy-belt-copper-lantern-off",
+				"sturdy-belt-blackbronze-lantern-off",
+				"sturdy-belt-blackbronze-lantern-on",
+				"sturdy-belt-gold-lantern-on",
+				"sturdy-belt-gold-lantern-off",
+				"sturdy-belt-bismuthbronze-lantern-off",
+				"sturdy-belt-bismuthbronze-lantern-on",
+				"sturdy-belt-silver-lantern-off",
+				"sturdy-belt-silver-lantern-on"
 			]
 		}
 	],
@@ -66,9 +66,6 @@
 		"items": [ "@.*-(off)" ],
 		"clothing": [ "@.*-(off)" ],
 		"awearablelight": [ "@.*-(off)" ]
-	},
-	"lightHsvbyType": {
-		"@.*-(on)": [ 6, 4, 12 ]
 	},
 	"renderAlphaTest": 0.25,
 	"fpHandTransform": {

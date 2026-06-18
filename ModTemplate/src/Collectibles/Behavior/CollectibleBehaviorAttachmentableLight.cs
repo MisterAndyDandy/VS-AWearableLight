@@ -27,13 +27,47 @@ namespace AWearableLight
         {
         }
 
+        public override void Initialize(JsonObject properties)
+        {
+            _ = this.collObj;
+            base.Initialize(properties);
+        }
+
         public override void OnLoaded(ICoreAPI api)
         {
+            base.OnLoaded(api);
+
             this.api = api;
 
+            bool firstTime = false;
+
+            if(WearableLightConfigHelper.GetProps(this.collObj.Code) is FuelProps fuelProps && fuelProps.LightHsv.Count() != 0 && !firstTime)
+            {
+                firstTime = true;
+                SetLightHsv(fuelProps.LightHsv);
+            }
+
             WeatherSystemBase = api.ModLoader.GetModSystem<WeatherSystemBase>();
-           
-            base.OnLoaded(api);
+        }
+
+        public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)
+        {
+            return new WorldInteraction[2]
+            {
+                new WorldInteraction
+                {
+                    ActionLangCode = Lang.GetMatching("awearablelight:heldhelp-toggle-activeslot"),
+                    MouseButton = EnumMouseButton.None,
+                    HotKeyCode = "toggleLight"
+                },
+                new WorldInteraction
+                {
+                    ActionLangCode = Lang.GetMatching("awearablelight:heldhelp-toggle-gearslot"),
+                    MouseButton = EnumMouseButton.None,
+                    HotKeyCode = "toggleHoveredGearLight"
+
+                }
+            }.Append(base.GetHeldInteractionHelp(inSlot, ref handling));
         }
 
         public bool LightState(ItemStack stack)
@@ -69,7 +103,7 @@ namespace AWearableLight
             }
 
             // Play toggle sound
-            bool value = AWearableLightCore.ClientConfig?.EnableSounds ?? false;
+            bool value = ConfigConstants.ClientConfig?.EnableSounds ?? false;
 
             if (value && player != null)
             {
@@ -108,9 +142,31 @@ namespace AWearableLight
                 {
                     Attributes = clonedAttributes
                 };
+
+                var lightHsv = WearableLightConfigHelper.GetProps(slot.Itemstack.Collectible.Code)?.LightHsv ?? new int[3];
+
+                SetOrRemoveLightHsv(slot.Itemstack, lightHsv);
+
             }
 
             slot.MarkDirty();
+        }
+
+        public virtual void SetLightHsv(int[] lightHsv)
+        {
+            byte[] light = lightHsv.Select(x => (byte)x).ToArray();
+
+            if(collObj.Code.EndVariant() == "on")
+            {
+                collObj.LightHsv = light;
+            }
+        }
+
+        public virtual void SetOrRemoveLightHsv(ItemStack itemStack, int[] lightHsv)
+        {
+            byte[] light = lightHsv.Select(x => (byte)x).ToArray();
+
+            itemStack.Collectible.LightHsv = LightState(itemStack) == true ? light : new byte[3];
         }
 
         public virtual bool GetWeather(EntityAgent entity, ItemStack itemStack)
@@ -119,6 +175,8 @@ namespace AWearableLight
 
             if (WeatherSystemBase == null) return false;
 
+            if (!WearableLightConfigHelper.GetProps(itemStack.Collectible.Code).RainExtinguish) return false;
+
             if (!LightState(itemStack)) return false;
 
             var pos = entity.Pos;
@@ -126,8 +184,13 @@ namespace AWearableLight
             float rain = WeatherSystemBase.GetPrecipitation(pos.XYZ);
 
             bool exposedToRain = api.World.BlockAccessor.GetRainMapHeightAt(pos.AsBlockPos.X, pos.AsBlockPos.Z) <= entity.Pos.Y;
+            
+            if (!exposedToRain)
+            {
+                return false;
+            }
 
-            if (!exposedToRain || rain <= 0.4f)
+            if(rain <= 0.4f)
             {
                 return false;
             }
@@ -143,6 +206,8 @@ namespace AWearableLight
             {
                 return false;
             }
+
+            if (!WearableLightConfigHelper.GetProps(itemStack.Collectible.Code).InLiquid) return false;
 
             if (!LightState(itemStack))
             {
@@ -206,26 +271,6 @@ namespace AWearableLight
             // =====================================================
 
             return liquidLevel >= offsetY;
-        }
-
-        public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot, ref EnumHandling handling)
-        {
-            return new WorldInteraction[2]
-            {
-                new WorldInteraction
-                {
-                    ActionLangCode = Lang.GetMatching("awearablelight:heldhelp-toggle-activeslot"),
-                    MouseButton = EnumMouseButton.None,
-                    HotKeyCode = "toggleLight"
-                },
-                new WorldInteraction
-                {
-                    ActionLangCode = Lang.GetMatching("awearablelight:heldhelp-toggle-gearslot"),
-                    MouseButton = EnumMouseButton.None,
-                    HotKeyCode = "toggleHoveredGearLight"
-
-                }
-            }.Append(base.GetHeldInteractionHelp(inSlot, ref handling));
         }
     }
 }

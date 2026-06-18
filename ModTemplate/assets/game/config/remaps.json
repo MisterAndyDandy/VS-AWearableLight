@@ -1,0 +1,27 @@
+{
+    "game:v1.22.0waistlanterns": [
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-tinbronze-lantern-off awearablelight:clothes-waist-heavy-belt-tinbronze-lantern-off force",
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-tinbronze-lantern-on awearablelight:clothes-waist-heavy-belt-tinbronze-lantern-on force",
+  
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-brass-lantern-off awearablelight:clothes-waist-heavy-belt-brass-lantern-off force",
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-brass-lantern-on  awearablelight:clothes-waist-heavy-belt-brass-lantern-on force",
+  
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-blackbronze-lantern-off awearablelight:lothes-waist-heavy-belt-blackbronze-lantern-off  force",
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-blackbronze-lantern-on awearablelight:clothes-waist-heavy-belt-blackbronze-lantern-on force",
+  
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-copper-lantern-off awearablelight:clothes-waist-heavy-belt-copper-lantern-off  force",
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-copper-lantern-on awearablelight:clothes-waist-heavy-belt-copper-lantern-on force",
+  
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-iron-lantern-off awearablelight:clothes-waist-heavy-belt-iron-lantern-off force",
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-iron-lantern-on awearablelight:clothes-waist-heavy-belt-iron-lantern-on force",
+  
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-gold-lantern-off awearablelight:clothes-waist-heavy-belt-gold-lantern-off force",
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-gold-lantern-on awearablelight:clothes-waist-heavy-belt-gold-lantern-on force",
+  
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-silver-lantern-off awearablelight:clothes-waist-heavy-belt-silver-lantern-off  force",
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-silver-lantern-on awearablelight:clothes-waist-heavy-belt-silver-lantern-on force",
+  
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-bismuthbronze-lantern-off awearablelight:clothes-waist-heavy-belt-bismuthbronze-lantern-off  force",
+      "/iir remap awearablelight:clothes-waist-sturdy-belt-bismuthbronze-lantern-on awearablelight:clothes-waist-heavy-belt-bismuthbronze-lantern-on force"
+    ]
+  }

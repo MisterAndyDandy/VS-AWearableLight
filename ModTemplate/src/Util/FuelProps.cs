@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 
 namespace AWearableLight.Util
 {
@@ -10,6 +13,7 @@ namespace AWearableLight.Util
         public bool InLiquid { get; set; } = false;
         public bool OnCraftedFueled { get; set; } = false;
         public float Capacity { get; set; } = 24f;
+        public int[] LightHsv { get; set; } = new int[3];
         public Dictionary<string, float> FuelList { get; set; } = new();
     }
 }

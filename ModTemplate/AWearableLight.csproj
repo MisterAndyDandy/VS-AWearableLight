@@ -10,6 +10,10 @@
       <HintPath>$(AppData)\Vintagestory\Lib\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="cairo-sharp">
+      <HintPath>C:\Users\andy-\AppData\Roaming\Vintagestory\Lib\cairo-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>$(AppData)\Vintagestory\Lib\protobuf-net.dll</HintPath>
       <Private>False</Private>
@@ -17,6 +21,10 @@
     <Reference Include="VintagestoryAPI">
       <HintPath>$(AppData)\Vintagestory\VintagestoryAPI.dll</HintPath>
       <Private>false</Private>
+    </Reference>
+    <Reference Include="VintagestoryLib">
+      <HintPath>C:\Users\andy-\AppData\Roaming\Vintagestory\VintagestoryLib.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="VSSurvivalMod">
       <HintPath>$(AppData)\Vintagestory\Mods\VSSurvivalMod.dll</HintPath>
@@ -49,8 +57,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\awearablelight\itemtypes\armors\" />
+    <Folder Include="assets\game\" />
     <Folder Include="src\Effects\" />
     <Folder Include="src\Item\" />
-    <Folder Include="src\Render\" />
   </ItemGroup>
 </Project>
